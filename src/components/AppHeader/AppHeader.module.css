@@ -14,7 +14,7 @@ background: rgb(28, 28, 33);
 }
 .nav__list{
    display: flex;
-   gap: 8px;
+   gap: 28px;
    padding-left: 0;
 }
 .nav__item{
