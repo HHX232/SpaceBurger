@@ -1,5 +1,5 @@
 import React from "react";
-import data from "./../../utils/data";
+import PropTypes from "prop-types";
 import style from "../BurgerConstructor/BurgerConstructor.module.css";
 import {
   ConstructorElement,
@@ -24,17 +24,25 @@ function BurgerItem({ id, text, price, image, onRemove }) {
   );
 }
 
-function BurgerList({ ingridients, onRemove, setIngridients }) {
+BurgerItem.propTypes = {
+  id: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
+  price: PropTypes.number.isRequired,
+  image: PropTypes.string.isRequired,
+  onRemove: PropTypes.func.isRequired,
+};
+
+function BurgerList({ ingredients, onRemove, setIngredients }) {
   return (
     <Reorder.Group
       className={`${style.constructor__list} ${style.custom__scrollbar}`}
       axis="y"
-      values={ingridients}
-      onReorder={setIngridients}
+      values={ingredients}
+      onReorder={setIngredients}
     >
-      {ingridients.map((item, index) => (
+      {ingredients.map((item) => (
         <Reorder.Item
-          key={item.id} // Use item.id as key
+          key={item.id}
           value={item}
           className={`${style.constructor__list_el}`}
         >
@@ -51,9 +59,25 @@ function BurgerList({ ingridients, onRemove, setIngridients }) {
   );
 }
 
-const BurgerConstructor = ({ ingridients, onRemove, setIngridients }) => {
-  const bun = data.find((item) => item.type === 'bun');
-  const totalPrice = ingridients.reduce((total, item) => total + item.price, bun ? bun.price * 2 : 0); 
+BurgerList.propTypes = {
+  ingredients: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      text: PropTypes.string.isRequired,
+      price: PropTypes.number.isRequired,
+      image: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  onRemove: PropTypes.func.isRequired,
+  setIngredients: PropTypes.func.isRequired,
+};
+
+const BurgerConstructor = ({ ingredients = [], bun = null, onRemove, setIngredients }) => {
+  const totalPrice = ingredients.reduce(
+    (total, item) => total + item.price,
+    bun ? bun.price * 2 : 0
+  );
+
   return (
     <div className={`${style.constructor} ml-4 mt-25`}>
       {bun && (
@@ -61,23 +85,23 @@ const BurgerConstructor = ({ ingridients, onRemove, setIngridients }) => {
           <ConstructorElement
             type="top"
             isLocked={true}
-            text={`${bun.name} (верх)`}
+            text={`${bun.text} (верх)`}
             price={bun.price}
             thumbnail={bun.image}
           />
         </div>
       )}
       <BurgerList
-        ingridients={ingridients}
+        ingredients={ingredients}
         onRemove={onRemove}
-        setIngridients={setIngridients}
+        setIngredients={setIngredients}
       />
       {bun && (
         <div className={`${style.constructor__el} ml-8 mb-6`}>
           <ConstructorElement
             type="bottom"
             isLocked={true}
-            text={`${bun.name} (низ)`}
+            text={`${bun.text} (низ)`}
             price={bun.price}
             thumbnail={bun.image}
           />
@@ -96,6 +120,25 @@ const BurgerConstructor = ({ ingridients, onRemove, setIngridients }) => {
       </div>
     </div>
   );
+};
+
+BurgerConstructor.propTypes = {
+  ingredients: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      text: PropTypes.string.isRequired,
+      price: PropTypes.number.isRequired,
+      image: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  bun: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    text: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
+    image: PropTypes.string.isRequired,
+  }),
+  onRemove: PropTypes.func.isRequired,
+  setIngredients: PropTypes.func.isRequired,
 };
 
 export default BurgerConstructor;

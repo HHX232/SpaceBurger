@@ -52,6 +52,7 @@ class ProfileButton extends React.Component {
 
 function AppHeader() {
   return (
+    <header>
     <nav className={`${stylesHeader.header} `}>
       <div className={stylesHeader.header__container}>
         <div className={stylesHeader.header__inner}>
@@ -76,6 +77,7 @@ function AppHeader() {
         </div>
       </div>
     </nav>
+    </header>
   );
 }
 

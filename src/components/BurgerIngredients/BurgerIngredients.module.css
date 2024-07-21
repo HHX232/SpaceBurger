@@ -79,7 +79,10 @@
  .name {
    max-width: 252px !important;
  }
-
+.tub_container{ 
+  display: flex; 
+  margin-bottom: 40px 
+}
  .custom__scrollbar {
   scrollbar-width: thin;
   scrollbar-color: #8585AD transparent;
