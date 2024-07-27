@@ -58,7 +58,7 @@ function BurgerList({ ingredients, onRemove, setIngredients }) {
     </Reorder.Group>
   );
 }
-
+ 
 BurgerList.propTypes = {
   ingredients: PropTypes.arrayOf(
     PropTypes.shape({
@@ -72,7 +72,9 @@ BurgerList.propTypes = {
   setIngredients: PropTypes.func.isRequired,
 };
 
-const BurgerConstructor = ({ ingredients = [], bun = null, onRemove, setIngredients }) => {
+
+
+const BurgerConstructor = ({ ingredients = [], bun = null, onRemove, setIngredients, openOrderDetails }) => {
   const totalPrice = ingredients.reduce(
     (total, item) => total + item.price,
     bun ? bun.price * 2 : 0
@@ -114,7 +116,7 @@ const BurgerConstructor = ({ ingredients = [], bun = null, onRemove, setIngredie
           </p>
           <CurrencyIcon type="primary" className={style.total_icon} />
         </div>
-        <Button htmlType="button" type="primary" size="large">
+        <Button onClick={openOrderDetails} htmlType="button" type="primary" size="large">
           Оформить заказ
         </Button>
       </div>
@@ -132,13 +134,14 @@ BurgerConstructor.propTypes = {
     })
   ).isRequired,
   bun: PropTypes.shape({
-    id: PropTypes.string.isRequired,
+    id: PropTypes.string,
     text: PropTypes.string.isRequired,
     price: PropTypes.number.isRequired,
     image: PropTypes.string.isRequired,
   }),
   onRemove: PropTypes.func.isRequired,
   setIngredients: PropTypes.func.isRequired,
+  openOrderDetails: PropTypes.func.isRequired,
 };
 
 export default BurgerConstructor;

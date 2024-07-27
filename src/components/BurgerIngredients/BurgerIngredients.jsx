@@ -4,11 +4,16 @@ import { Tab, Counter, CurrencyIcon } from "@ya.praktikum/react-developer-burger
 import style from "./BurgerIngredients.module.css";
 import data from "./../../utils/data";
 
-const Card = ({ id, image, price, type, name, onAdd, onRemove, ingredients }) => {
+const Card = ({ id, image, price, type, name, onAdd, onRemove, ingredients,proteins,fat,carbohydrates,calories, isIngredientDetailsOpen, setIngredientDetailsOpen,food_title }) => {
   const [count, setCount] = useState(0);
   const [inBasket, setInBasket] = useState(false);
 
-  const handleClick = () => {
+  const onOneClick = () =>{
+    setIngredientDetailsOpen({isOpen:true, proteins:proteins,fat:fat,carbohydrates:carbohydrates,calories:calories, image: image, food_title:food_title})
+  }
+  //двойной клик-в корзину
+  const handleClick = (e) => {
+    e.preventDefault();
     if (type === "bun") {
       onAdd({ id, text: name, price, image, type });
       return;
@@ -19,7 +24,7 @@ const Card = ({ id, image, price, type, name, onAdd, onRemove, ingredients }) =>
     setCount(count + 1);
     onAdd({ id: `${id}_${count}`, text: name, price, image, type });
   };
-
+  //правая к
   const handleContextMenu = (e) => {
     e.preventDefault();
     setCount(count - 1);
@@ -38,8 +43,9 @@ const Card = ({ id, image, price, type, name, onAdd, onRemove, ingredients }) =>
   return (
     <div
       className={style.card}
-      onContextMenu={handleContextMenu}
-      onClick={handleClick}
+      onContextMenu={handleClick}
+      onDoubleClick={handleClick}
+      onClick={onOneClick}
     >
       {count > 0 && <Counter count={count} size="default" />}
       <img src={image} alt={name} className={style.image} />
@@ -56,24 +62,29 @@ const Card = ({ id, image, price, type, name, onAdd, onRemove, ingredients }) =>
   );
 };
 
+
 Card.propTypes = {
   id: PropTypes.string.isRequired,
   image: PropTypes.string.isRequired,
   price: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
   onAdd: PropTypes.func.isRequired,
-  type: PropTypes.string.isRequired,
-  onRemove: PropTypes.func.isRequired,
-  ingredients: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      text: PropTypes.string,
-      price: PropTypes.number,
-      image: PropTypes.string,
-    })
-  ).isRequired,
+  isIngredientDetailsOpen: PropTypes.shape({
+    isOpen: PropTypes.bool.isRequired,
+    proteins: PropTypes.number.isRequired,
+    fat: PropTypes.number.isRequired,
+    carbohydrates: PropTypes.number.isRequired,
+    calories: PropTypes.number.isRequired,
+    image: PropTypes.string.isRequired,
+    food_title: PropTypes.string.isRequired,
+  }).isRequired,
+  setIngredientDetailsOpen: PropTypes.func.isRequired,
+  proteins: PropTypes.number.isRequired,
+  fat: PropTypes.number.isRequired,
+  carbohydrates: PropTypes.number.isRequired,
+  calories: PropTypes.number.isRequired,
+  food_title: PropTypes.string.isRequired,
 };
-
 const CardTitle = ({ title, refProp }) => {
   return (
     <h2 ref={refProp} className="text text_type_main-medium mb-6">
@@ -90,10 +101,10 @@ CardTitle.propTypes = {
   ]),
 };
 
-const CardSets = ({ ingredients, bunsRef, saucesRef, mainsRef, onAdd, onRemove }) => {
-  const buns = data.filter((item) => item.type === "bun");
-  const sauces = data.filter((item) => item.type === "sauce");
-  const mains = data.filter((item) => item.type === "main");
+const CardSets = ({ ingredients, bunsRef, saucesRef, mainsRef, onAdd, onRemove, newData,isIngredientDetailsOpen, setIngredientDetailsOpen }) => {
+  const buns = newData.filter((item) => item.type === "bun");
+  const sauces = newData.filter((item) => item.type === "sauce");
+  const mains = newData.filter((item) => item.type === "main");
 
   return (
     <div>
@@ -106,7 +117,14 @@ const CardSets = ({ ingredients, bunsRef, saucesRef, mainsRef, onAdd, onRemove }
             image={bun.image}
             price={bun.price}
             name={bun.name}
+            food_title={bun.name}
             onAdd={onAdd}
+            proteins = {bun.proteins}
+            fat = {bun.fat}
+            carbohydrates = {bun.carbohydrates}
+            calories = {bun.calories}
+            isIngredientDetailsOpen = {isIngredientDetailsOpen}
+            setIngredientDetailsOpen = {setIngredientDetailsOpen}
             type={bun.type}
             onRemove={onRemove}
             ingredients={ingredients}
@@ -122,7 +140,14 @@ const CardSets = ({ ingredients, bunsRef, saucesRef, mainsRef, onAdd, onRemove }
             image={sauce.image}
             price={sauce.price}
             name={sauce.name}
+            food_title={sauce.name}
             type={sauce.type}
+            proteins = {sauce.proteins}
+            fat = {sauce.fat}
+            carbohydrates = {sauce.carbohydrates}
+            calories = {sauce.calories}
+            isIngredientDetailsOpen = {isIngredientDetailsOpen}
+              setIngredientDetailsOpen = {setIngredientDetailsOpen}
             onAdd={onAdd}
             onRemove={onRemove}
             ingredients={ingredients}
@@ -138,7 +163,14 @@ const CardSets = ({ ingredients, bunsRef, saucesRef, mainsRef, onAdd, onRemove }
             image={main.image}
             price={main.price}
             name={main.name}
+            food_title={main.name}
             type={main.type}
+            proteins = {main.proteins}
+            fat = {main.fat}
+            isIngredientDetailsOpen = {isIngredientDetailsOpen}
+              setIngredientDetailsOpen = {setIngredientDetailsOpen}
+            carbohydrates = {main.carbohydrates}
+            calories = {main.calories}
             onAdd={onAdd}
             onRemove={onRemove}
             ingredients={ingredients}
@@ -172,6 +204,29 @@ CardSets.propTypes = {
   ]).isRequired,
   onAdd: PropTypes.func.isRequired,
   onRemove: PropTypes.func.isRequired,
+  newData: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      image: PropTypes.string.isRequired,
+      price: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
+      type: PropTypes.string.isRequired,
+      proteins: PropTypes.number.isRequired,
+      fat: PropTypes.number.isRequired,
+      carbohydrates: PropTypes.number.isRequired,
+      calories: PropTypes.number.isRequired,
+    })
+  ).isRequired,
+  isIngredientDetailsOpen: PropTypes.shape({
+    isOpen: PropTypes.bool.isRequired,
+    proteins: PropTypes.number.isRequired,
+    fat: PropTypes.number.isRequired,
+    carbohydrates: PropTypes.number.isRequired,
+    calories: PropTypes.number.isRequired,
+    image: PropTypes.string.isRequired,
+    food_title: PropTypes.string.isRequired,
+  }).isRequired,
+  setIngredientDetailsOpen: PropTypes.func.isRequired,
 };
 
 const TabsComponent = ({ current, setCurrent, bunsRef, saucesRef, mainsRef }) => {
@@ -229,8 +284,8 @@ TabsComponent.propTypes = {
     PropTypes.shape({ current: PropTypes.instanceOf(Element) })
   ]).isRequired,
 };
-
-function BurgerIngredients({ ingredients, onAdd, onRemove }) {
+ 
+function BurgerIngredients({ ingredients, onAdd, onRemove, newData, isIngredientDetailsOpen, setIngredientDetailsOpen }) {
   const [current, setCurrent] = useState("one");
   const bunsRef = useRef(null);
   const saucesRef = useRef(null);
@@ -252,7 +307,10 @@ function BurgerIngredients({ ingredients, onAdd, onRemove }) {
         <div className={`${style.content} ${style.custom__scrollbar}`}>
           <ul className={`${style.list}`}>
             <CardSets
+              newData={newData}
               ingredients={ingredients}
+              isIngredientDetailsOpen = {isIngredientDetailsOpen}
+              setIngredientDetailsOpen = {setIngredientDetailsOpen}
               bunsRef={bunsRef}
               saucesRef={saucesRef}
               mainsRef={mainsRef}
