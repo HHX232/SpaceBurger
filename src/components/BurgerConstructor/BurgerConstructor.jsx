@@ -8,6 +8,7 @@ import {
   Button,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import { Reorder } from "framer-motion";
+import IngredientType from '../../utils/types';
 
 function BurgerItem({ id, text, price, image, onRemove }) {
   return (
@@ -60,14 +61,7 @@ function BurgerList({ ingredients, onRemove, setIngredients }) {
 }
  
 BurgerList.propTypes = {
-  ingredients: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      text: PropTypes.string.isRequired,
-      price: PropTypes.number.isRequired,
-      image: PropTypes.string.isRequired,
-    })
-  ).isRequired,
+  ingredients: PropTypes.arrayOf(IngredientType).isRequired,
   onRemove: PropTypes.func.isRequired,
   setIngredients: PropTypes.func.isRequired,
 };
@@ -125,14 +119,7 @@ const BurgerConstructor = ({ ingredients = [], bun = null, onRemove, setIngredie
 };
 
 BurgerConstructor.propTypes = {
-  ingredients: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      text: PropTypes.string.isRequired,
-      price: PropTypes.number.isRequired,
-      image: PropTypes.string.isRequired,
-    })
-  ).isRequired,
+  ingredients: PropTypes.arrayOf(IngredientType).isRequired,
   bun: PropTypes.shape({
     id: PropTypes.string,
     text: PropTypes.string.isRequired,

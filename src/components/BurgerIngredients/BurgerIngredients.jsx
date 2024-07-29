@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { Tab, Counter, CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import style from "./BurgerIngredients.module.css";
 import data from "./../../utils/data";
-
+import IngredientType from '../../utils/types';
 const Card = ({ id, image, price, type, name, onAdd, onRemove, ingredients,proteins,fat,carbohydrates,calories, isIngredientDetailsOpen, setIngredientDetailsOpen,food_title }) => {
   const [count, setCount] = useState(0);
   const [inBasket, setInBasket] = useState(false);
@@ -182,14 +182,7 @@ const CardSets = ({ ingredients, bunsRef, saucesRef, mainsRef, onAdd, onRemove, 
 };
 
 CardSets.propTypes = {
-  ingredients: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      text: PropTypes.string,
-      price: PropTypes.number,
-      image: PropTypes.string,
-    })
-  ).isRequired,
+  ingredients: PropTypes.arrayOf(IngredientType).isRequired, //импортируемый IngredientType
   bunsRef: PropTypes.oneOfType([
     PropTypes.func, 
     PropTypes.shape({ current: PropTypes.instanceOf(Element) })
@@ -325,14 +318,7 @@ function BurgerIngredients({ ingredients, onAdd, onRemove, newData, isIngredient
 }
 
 BurgerIngredients.propTypes = {
-  ingredients: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      text: PropTypes.string,
-      price: PropTypes.number,
-      image: PropTypes.string,
-    })
-  ).isRequired,
+  ingredients: PropTypes.arrayOf(IngredientType).isRequired,
   onAdd: PropTypes.func.isRequired,
   onRemove: PropTypes.func.isRequired,
 };

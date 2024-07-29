@@ -5,7 +5,7 @@ import BurgerConstructor from "../BurgerConstructor/BurgerConstructor";
 import style from './App.module.css';
 import OrderDetails from "../OrderDetails/OrderDetails";
 import IngredientDetails from '../IngredientDetails/IngredientDetails';
-
+import Modal from '../Modal/Modal'
 const initialBun = {
   _id: "60666c42cc7b410027a1a9b1",
   text: "Краторная булка N-200i",
@@ -31,10 +31,16 @@ function App() {
 
   useEffect(() => {
     fetch(API)
-      .then(response => response.json())
-      .then(data => setNewData(data.data))
-      .catch(error => console.error('Ошибка:', error));
-  }, []);
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            return Promise.reject(`Ошибка ${response.status}`);
+        })
+        .then(data => setNewData(data.data))
+        .catch(error => console.error('Ошибка:', error));
+}, []);
+
 
   const onAdd = (item) => {
     if (item.type === "bun") {
@@ -60,7 +66,6 @@ function App() {
   const closeOrderDetails = () => {
     setOrderDetailsOpen(false);
   };
-
   return (
     <>
       <AppHeader />
@@ -81,8 +86,8 @@ function App() {
           openOrderDetails={openOrderDetails}
         />
       </main>
-      {isOrderDetailsOpen && <OrderDetails onClose={closeOrderDetails} />}
-      {isIngredientDetailsOpen.isOpen && <IngredientDetails image={isIngredientDetailsOpen.image} calories={isIngredientDetailsOpen.calories} proteins={isIngredientDetailsOpen.proteins} fats={isIngredientDetailsOpen.fat}  food_title={isIngredientDetailsOpen.food_title} carbohydrates={isIngredientDetailsOpen.carbohydrates} onClose={closeIngredientDetails} />}
+      {isOrderDetailsOpen && <Modal onClose={closeOrderDetails}> <OrderDetails onClose={closeOrderDetails} /></Modal>}
+      {isIngredientDetailsOpen.isOpen && <Modal title="Детали ингредиента" onClose={closeIngredientDetails}> <IngredientDetails ingredientDetailsObject={isIngredientDetailsOpen} /></Modal>}
     </>
   );
 }

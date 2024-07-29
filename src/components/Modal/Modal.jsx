@@ -26,7 +26,7 @@ ModalOverlay.propTypes = {
 function Modal({ title = "", children, onClose }) {
   useEffect(() => {
     const handleEsc = (event) => {
-      if (event.keyCode === 27) {
+      if (event.key === "Escape") {
         onClose();
       }
     };
@@ -50,7 +50,7 @@ function Modal({ title = "", children, onClose }) {
         </div>
       </ModalOverlay>
     </div>,
-    document.getElementById('root')
+    document.getElementById('modals')
   );
 }
 
