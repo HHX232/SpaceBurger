@@ -25,3 +25,6 @@ a{
 li{
    marker: none;
 }
+html{
+   overflow-x: hidden;
+}

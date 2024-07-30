@@ -1,0 +1,24 @@
+.image{
+width: 480px;
+height: 240px;
+margin: 0 auto;
+}
+.pfc_list{
+   list-style-type: none; 
+   display: grid;
+   grid-template-columns: repeat(4, 1fr);
+   gap: 20px;
+   margin: 0;
+   padding: 0;
+}
+.pfc_item{
+   display: flex;
+   flex-direction: column;
+   max-width: 125px;
+text-align: center;
+gap: 8px;
+}
+.pfc_item_title, .pfc_item_number{
+   margin: 0;
+
+}
