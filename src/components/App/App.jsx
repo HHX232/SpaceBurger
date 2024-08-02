@@ -5,11 +5,12 @@ import BurgerConstructor from "../BurgerConstructor/BurgerConstructor";
 import style from './App.module.css';
 import OrderDetails from "../OrderDetails/OrderDetails";
 import IngredientDetails from '../IngredientDetails/IngredientDetails';
-import Modal from '../Modal/Modal'
+import Modal from '../Modal/Modal';
 import { useDispatch, useSelector } from 'react-redux';
-import  { takeIngredients } from '../../services/actions/ingredient-action'
-import { addIngredient, removeIngredient, reorderIngredients } from '../../services/actions/constructor-action'
-
+import { takeIngredients } from '../../services/actions/ingredient-action';
+import { addIngredient, removeIngredient, reorderIngredients } from '../../services/actions/constructor-action';
+import { openIngredientDetails, closeIngredientDetails } from '../../services/actions/ingredient-details-open-action';
+import {openOrderDetails, closeOrderDetails} from '../../services/actions/order-details-action'
 const initialBun = {
   _id: "60666c42cc7b410027a1a9b1",
   text: "Краторная булка N-200i",
@@ -25,69 +26,85 @@ const initialBun = {
   __v: 0,
 };
 
-
 function App() {
-  const [ingredients2, setIngredients] = useState([]);
-  //старая булочка из useState
-  const [bun2, setBun] = useState(initialBun);
-  const [isOrderDetailsOpen, setOrderDetailsOpen] = useState(false);
-  const [isIngredientDetailsOpen, setIngredientDetailsOpen] = useState({isOpen:false, proteins:0,fat:0,carbohydrates:0,calories:110, image: initialBun.image, food_title:""});
-  
-//данные через redux
+ 
+
+  //данные через redux
   const dispatch = useDispatch();
   const { global_ingredients } = useSelector(state => state.ingredients);
-  const { ingredients, bun } = useSelector(state => state.constructor);
+  const { ingredients, bun } = useSelector(state => state.constructorList);
+  const {ingredientObject} = useSelector(store => store.ingredientDetails)
+  const isOpenOrderDetails = useSelector(store => store.orderDetails.isOpen);
+  
+function setIngredientDetailsOpen2(item){
+dispatch(openIngredientDetails(item))
+}
+ 
+  function setIngredients(item) {
+    dispatch(reorderIngredients(item));
+  }
 
-    
   useEffect(() => {
     dispatch(takeIngredients());
-    dispatch(reorderIngredients())
   }, [dispatch]);
 
+  useEffect(() => {
+    if (global_ingredients.length > 0) {
+      const firstBun = global_ingredients.find(ingredient => ingredient.type === 'bun');
+      if (firstBun) {
+        onAdd({
+          ...firstBun,
+          text: firstBun.name 
+        });
+      }
+    }
+  }, [global_ingredients]);
 
   const onAdd = (item) => {
-   dispatch(addIngredient(item))
+    dispatch(addIngredient(item));
   };
 
   const onRemove = (id) => {
-    dispatch(removeIngredient(id))
+    dispatch(removeIngredient(id));
   };
 
-  const openIngredientDetails = () =>{
-    setIngredientDetailsOpen({...isIngredientDetailsOpen, isOpen:true});
-  }
-  const closeIngredientDetails = () =>{
-    setIngredientDetailsOpen({...isIngredientDetailsOpen, isOpen:false});
-  }
-  const openOrderDetails = () => {
-    setOrderDetailsOpen(true);
+  
+
+  const closeIngredientDetailsFunction = () => {
+   dispatch(closeIngredientDetails())
   };
 
-  const closeOrderDetails = () => {
-    setOrderDetailsOpen(false);
+
+  const handleOpenOrderDetails = () => {
+    dispatch(openOrderDetails());
   };
+  
+  const handleCloseOrderDetails = () => {
+    dispatch(closeOrderDetails());
+  };
+
   return (
     <>
       <AppHeader />
       <main className={`${style.container} ${style.main_content}`}>
         <BurgerIngredients
-          ingredients={ingredients2}
+          ingredients={ingredients}
           onAdd={onAdd}
           onRemove={onRemove}
           newData={global_ingredients}
-          setIngredientDetailsOpen={setIngredientDetailsOpen}
-          isIngredientDetailsOpen={isIngredientDetailsOpen}
+          setIngredientDetailsOpen={setIngredientDetailsOpen2}
+          isIngredientDetailsOpen={ingredientObject}
         />
         <BurgerConstructor
-          ingredients={ingredients2}
-          bun={bun2}
+          ingredients={ingredients}
+          bun={bun}
           onRemove={onRemove}
           setIngredients={setIngredients}
-          openOrderDetails={openOrderDetails}
+          openOrderDetails={handleOpenOrderDetails}
         />
       </main>
-      {isOrderDetailsOpen && <Modal onClose={closeOrderDetails}> <OrderDetails onClose={closeOrderDetails} /></Modal>}
-      {isIngredientDetailsOpen.isOpen && <Modal title="Детали ингредиента" onClose={closeIngredientDetails}> <IngredientDetails ingredientDetailsObject={isIngredientDetailsOpen} /></Modal>}
+      {isOpenOrderDetails && <Modal onClose={handleCloseOrderDetails}> <OrderDetails onClose={handleCloseOrderDetails} /></Modal>}
+      {ingredientObject.isOpen && <Modal title="Детали ингредиента" onClose={closeIngredientDetailsFunction}> <IngredientDetails ingredientDetailsObject={ingredientObject} /></Modal>}
     </>
   );
 }

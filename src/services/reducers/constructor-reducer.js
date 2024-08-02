@@ -6,7 +6,20 @@ import {
  
  const initialState = {
    ingredients: [], 
-   bun: null,
+   bun: {
+      _id: "11111111111",
+      text: "Выберите булочку",
+      type: "bun",
+      proteins: 0,
+      fat: 0,
+      carbohydrates: 0,
+      calories: 0,
+      price: 0,
+      image: "https://code.s3.yandex.net/react/code/bun-02.png",
+      image_mobile: "https://code.s3.yandex.net/react/code/bun-02-mobile.png",
+      image_large: "https://code.s3.yandex.net/react/code/bun-02-large.png",
+      __v: 0,
+    },
  };
  
  const constructorReducer = (state = initialState, action) => {
@@ -30,7 +43,7 @@ import {
      case REORDER_INGREDIENTS:
        return {
          ...state,
-         ingredients: [action.payload]
+         ingredients: action.payload ?? []
        };
      default:
        return state;

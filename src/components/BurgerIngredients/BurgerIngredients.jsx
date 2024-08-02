@@ -4,6 +4,8 @@ import { Tab, Counter, CurrencyIcon } from "@ya.praktikum/react-developer-burger
 import style from "./BurgerIngredients.module.css";
 import data from "./../../utils/data";
 import IngredientType from '../../utils/types';
+
+
 const Card = ({ id, image, price, type, name, onAdd, onRemove, ingredients,proteins,fat,carbohydrates,calories, isIngredientDetailsOpen, setIngredientDetailsOpen,food_title }) => {
   const [count, setCount] = useState(0);
   const [inBasket, setInBasket] = useState(false);
@@ -24,7 +26,7 @@ const Card = ({ id, image, price, type, name, onAdd, onRemove, ingredients,prote
     setCount(count + 1);
     onAdd({ id: `${id}_${count}`, text: name, price, image, type });
   };
-  //правая к
+
   const handleContextMenu = (e) => {
     e.preventDefault();
     setCount(count - 1);
