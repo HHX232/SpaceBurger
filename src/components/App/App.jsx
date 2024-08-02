@@ -6,6 +6,10 @@ import style from './App.module.css';
 import OrderDetails from "../OrderDetails/OrderDetails";
 import IngredientDetails from '../IngredientDetails/IngredientDetails';
 import Modal from '../Modal/Modal'
+import { useDispatch, useSelector } from 'react-redux';
+import  { takeIngredients } from '../../services/actions/ingredient-action'
+import { addIngredient, removeIngredient, reorderIngredients } from '../../services/actions/constructor-action'
+
 const initialBun = {
   _id: "60666c42cc7b410027a1a9b1",
   text: "Краторная булка N-200i",
@@ -20,39 +24,35 @@ const initialBun = {
   image_large: "https://code.s3.yandex.net/react/code/bun-02-large.png",
   __v: 0,
 };
-const API = "https://norma.nomoreparties.space/api/ingredients"
+
 
 function App() {
-  const [ingredients, setIngredients] = useState([]);
-  const [bun, setBun] = useState(initialBun);
-  const [newData, setNewData] = useState([]);
+  const [ingredients2, setIngredients] = useState([]);
+  //старая булочка из useState
+  const [bun2, setBun] = useState(initialBun);
   const [isOrderDetailsOpen, setOrderDetailsOpen] = useState(false);
   const [isIngredientDetailsOpen, setIngredientDetailsOpen] = useState({isOpen:false, proteins:0,fat:0,carbohydrates:0,calories:110, image: initialBun.image, food_title:""});
+  
+//данные через redux
+  const dispatch = useDispatch();
+  const { global_ingredients } = useSelector(state => state.ingredients);
+  const { ingredients, bun } = useSelector(state => state.constructor);
 
+    
   useEffect(() => {
-    fetch(API)
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            }
-            return Promise.reject(`Ошибка ${response.status}`);
-        })
-        .then(data => setNewData(data.data))
-        .catch(error => console.error('Ошибка:', error));
-}, []);
+    dispatch(takeIngredients());
+    dispatch(reorderIngredients())
+  }, [dispatch]);
 
 
   const onAdd = (item) => {
-    if (item.type === "bun") {
-      setBun(item);
-      return;
-    }
-    setIngredients([...ingredients, item]);
+   dispatch(addIngredient(item))
   };
 
   const onRemove = (id) => {
-    setIngredients(ingredients.filter((item) => item._id !== id));
+    dispatch(removeIngredient(id))
   };
+
   const openIngredientDetails = () =>{
     setIngredientDetailsOpen({...isIngredientDetailsOpen, isOpen:true});
   }
@@ -71,16 +71,16 @@ function App() {
       <AppHeader />
       <main className={`${style.container} ${style.main_content}`}>
         <BurgerIngredients
-          ingredients={ingredients}
+          ingredients={ingredients2}
           onAdd={onAdd}
           onRemove={onRemove}
-          newData={newData}
+          newData={global_ingredients}
           setIngredientDetailsOpen={setIngredientDetailsOpen}
           isIngredientDetailsOpen={isIngredientDetailsOpen}
         />
         <BurgerConstructor
-          ingredients={ingredients}
-          bun={bun}
+          ingredients={ingredients2}
+          bun={bun2}
           onRemove={onRemove}
           setIngredients={setIngredients}
           openOrderDetails={openOrderDetails}
