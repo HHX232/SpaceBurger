@@ -5,7 +5,7 @@ const initialState = {
 
 const ingredientDetailsReducer = (state=initialState, action)=>{
 
-   switch(action.type){
+   switch(action.type){ 
       case INGREDIENT_DETAILS_IS_OPEN:
          return {...state, ingredientObject: action.payload}
       case INGREDIENT_DETAILS_IS_CLOSE:

@@ -7,9 +7,9 @@ export const addIngredient = (ingredient) => ({
   payload: ingredient
 });
 
-export const removeIngredient = (id) => ({
+export const removeIngredient = (generatedId) => ({
   type: REMOVE_INGREDIENT,
-  payload: id
+  payload: generatedId
 });
 
 export const reorderIngredients = (ingredients) => ({

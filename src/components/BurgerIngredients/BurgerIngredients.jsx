@@ -2,31 +2,46 @@ import { useState, useRef, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Tab, Counter, CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import style from "./BurgerIngredients.module.css";
-import data from "./../../utils/data";
-import IngredientType from '../../utils/types';
+import { useSelector, useDispatch } from "react-redux";
+import { addIngredient, removeIngredient } from '../../services/actions/constructor-action';
+import { openIngredientDetails } from '../../services/actions/ingredient-details-open-action';
+import { v4 as uuidv4 } from 'uuid';
 
-
-const Card = ({ id, image, price, type, name, onAdd, onRemove, ingredients,proteins,fat,carbohydrates,calories, isIngredientDetailsOpen, setIngredientDetailsOpen,food_title }) => {
+const Card = ({ id, image, price, type, name, ingredients, proteins, fat, carbohydrates, calories, food_title }) => {
   const [count, setCount] = useState(0);
   const [inBasket, setInBasket] = useState(false);
+  const dispatch = useDispatch();
 
-  const onOneClick = () =>{
-    setIngredientDetailsOpen({isOpen:true, proteins:proteins,fat:fat,carbohydrates:carbohydrates,calories:calories, image: image, food_title:food_title})
-  }
-  //двойной клик-в корзину
+  const setIngredientDetailsOpen = (item) => {
+    dispatch(openIngredientDetails(item));
+  };
+
+  const onAdd = (item) => {
+    dispatch(addIngredient(item));
+  };
+
+  const onRemove = (generatedId) => {
+    dispatch(removeIngredient(generatedId));
+  };
+
+  const onOneClick = () => {
+    setIngredientDetailsOpen({ isOpen: true, proteins, fat, carbohydrates, calories, image, food_title });
+  };
+
   const handleClick = (e) => {
     e.preventDefault();
+    const generatedId = uuidv4();
     if (type === "bun") {
-      onAdd({ id, text: name, price, image, type });
+      onAdd({ originalId: id, generatedId, text: name, price, image, type });
       return;
     }
     if (!inBasket) {
       setInBasket(true);
     }
     setCount(count + 1);
-    onAdd({ id: `${id}_${count}`, text: name, price, image, type });
+    onAdd({ originalId: id, generatedId, text: name, price, image, type });
   };
-
+  
   const handleContextMenu = (e) => {
     e.preventDefault();
     setCount(count - 1);
@@ -34,13 +49,13 @@ const Card = ({ id, image, price, type, name, onAdd, onRemove, ingredients,prote
       setCount(0);
       setInBasket(false);
     }
-    onRemove(`${id}_${count - 1}`);
+    onRemove(id);
   };
 
   useEffect(() => {
-    const c = ingredients.filter((item) => item.id.split("_")[0] === id).length;
+    const c = ingredients.filter((item) => item.text === name).length;
     setCount(c);
-  }, [ingredients, id]);
+  }, [ingredients, name]);
 
   return (
     <div
@@ -64,29 +79,19 @@ const Card = ({ id, image, price, type, name, onAdd, onRemove, ingredients,prote
   );
 };
 
-
 Card.propTypes = {
   id: PropTypes.string.isRequired,
   image: PropTypes.string.isRequired,
   price: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
-  onAdd: PropTypes.func.isRequired,
-  isIngredientDetailsOpen: PropTypes.shape({
-    isOpen: PropTypes.bool.isRequired,
-    proteins: PropTypes.number.isRequired,
-    fat: PropTypes.number.isRequired,
-    carbohydrates: PropTypes.number.isRequired,
-    calories: PropTypes.number.isRequired,
-    image: PropTypes.string.isRequired,
-    food_title: PropTypes.string.isRequired,
-  }).isRequired,
-  setIngredientDetailsOpen: PropTypes.func.isRequired,
   proteins: PropTypes.number.isRequired,
   fat: PropTypes.number.isRequired,
   carbohydrates: PropTypes.number.isRequired,
   calories: PropTypes.number.isRequired,
   food_title: PropTypes.string.isRequired,
+  ingredients: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
+
 const CardTitle = ({ title, refProp }) => {
   return (
     <h2 ref={refProp} className="text text_type_main-medium mb-6">
@@ -103,10 +108,12 @@ CardTitle.propTypes = {
   ]),
 };
 
-const CardSets = ({ ingredients, bunsRef, saucesRef, mainsRef, onAdd, onRemove, newData,isIngredientDetailsOpen, setIngredientDetailsOpen }) => {
-  const buns = newData.filter((item) => item.type === "bun");
-  const sauces = newData.filter((item) => item.type === "sauce");
-  const mains = newData.filter((item) => item.type === "main");
+const CardSets = ({ bunsRef, saucesRef, mainsRef }) => {
+  const { global_ingredients } = useSelector(state => state.ingredients);
+  const { ingredients } = useSelector(state => state.constructorList);
+  const buns = global_ingredients.filter((item) => item.type === "bun");
+  const sauces = global_ingredients.filter((item) => item.type === "sauce");
+  const mains = global_ingredients.filter((item) => item.type === "main");
 
   return (
     <div>
@@ -120,15 +127,11 @@ const CardSets = ({ ingredients, bunsRef, saucesRef, mainsRef, onAdd, onRemove, 
             price={bun.price}
             name={bun.name}
             food_title={bun.name}
-            onAdd={onAdd}
-            proteins = {bun.proteins}
-            fat = {bun.fat}
-            carbohydrates = {bun.carbohydrates}
-            calories = {bun.calories}
-            isIngredientDetailsOpen = {isIngredientDetailsOpen}
-            setIngredientDetailsOpen = {setIngredientDetailsOpen}
+            proteins={bun.proteins}
+            fat={bun.fat}
+            carbohydrates={bun.carbohydrates}
+            calories={bun.calories}
             type={bun.type}
-            onRemove={onRemove}
             ingredients={ingredients}
           />
         ))}
@@ -143,20 +146,16 @@ const CardSets = ({ ingredients, bunsRef, saucesRef, mainsRef, onAdd, onRemove, 
             price={sauce.price}
             name={sauce.name}
             food_title={sauce.name}
+            proteins={sauce.proteins}
+            fat={sauce.fat}
+            carbohydrates={sauce.carbohydrates}
+            calories={sauce.calories}
             type={sauce.type}
-            proteins = {sauce.proteins}
-            fat = {sauce.fat}
-            carbohydrates = {sauce.carbohydrates}
-            calories = {sauce.calories}
-            isIngredientDetailsOpen = {isIngredientDetailsOpen}
-              setIngredientDetailsOpen = {setIngredientDetailsOpen}
-            onAdd={onAdd}
-            onRemove={onRemove}
             ingredients={ingredients}
           />
         ))}
       </div>
-      <CardTitle refProp={mainsRef} title="Начинки"/>
+      <CardTitle refProp={mainsRef} title="Начинки" />
       <div className={`${style.cards} mb-10 ml-4`}>
         {mains.map((main) => (
           <Card
@@ -166,15 +165,11 @@ const CardSets = ({ ingredients, bunsRef, saucesRef, mainsRef, onAdd, onRemove, 
             price={main.price}
             name={main.name}
             food_title={main.name}
+            proteins={main.proteins}
+            fat={main.fat}
+            carbohydrates={main.carbohydrates}
+            calories={main.calories}
             type={main.type}
-            proteins = {main.proteins}
-            fat = {main.fat}
-            isIngredientDetailsOpen = {isIngredientDetailsOpen}
-              setIngredientDetailsOpen = {setIngredientDetailsOpen}
-            carbohydrates = {main.carbohydrates}
-            calories = {main.calories}
-            onAdd={onAdd}
-            onRemove={onRemove}
             ingredients={ingredients}
           />
         ))}
@@ -184,7 +179,6 @@ const CardSets = ({ ingredients, bunsRef, saucesRef, mainsRef, onAdd, onRemove, 
 };
 
 CardSets.propTypes = {
-  ingredients: PropTypes.arrayOf(IngredientType).isRequired, //импортируемый IngredientType
   bunsRef: PropTypes.oneOfType([
     PropTypes.func, 
     PropTypes.shape({ current: PropTypes.instanceOf(Element) })
@@ -197,31 +191,6 @@ CardSets.propTypes = {
     PropTypes.func, 
     PropTypes.shape({ current: PropTypes.instanceOf(Element) })
   ]).isRequired,
-  onAdd: PropTypes.func.isRequired,
-  onRemove: PropTypes.func.isRequired,
-  newData: PropTypes.arrayOf(
-    PropTypes.shape({
-      _id: PropTypes.string.isRequired,
-      image: PropTypes.string.isRequired,
-      price: PropTypes.number.isRequired,
-      name: PropTypes.string.isRequired,
-      type: PropTypes.string.isRequired,
-      proteins: PropTypes.number.isRequired,
-      fat: PropTypes.number.isRequired,
-      carbohydrates: PropTypes.number.isRequired,
-      calories: PropTypes.number.isRequired,
-    })
-  ).isRequired,
-  isIngredientDetailsOpen: PropTypes.shape({
-    isOpen: PropTypes.bool.isRequired,
-    proteins: PropTypes.number.isRequired,
-    fat: PropTypes.number.isRequired,
-    carbohydrates: PropTypes.number.isRequired,
-    calories: PropTypes.number.isRequired,
-    image: PropTypes.string.isRequired,
-    food_title: PropTypes.string.isRequired,
-  }).isRequired,
-  setIngredientDetailsOpen: PropTypes.func.isRequired,
 };
 
 const TabsComponent = ({ current, setCurrent, bunsRef, saucesRef, mainsRef }) => {
@@ -279,12 +248,40 @@ TabsComponent.propTypes = {
     PropTypes.shape({ current: PropTypes.instanceOf(Element) })
   ]).isRequired,
 };
- 
-function BurgerIngredients({ ingredients, onAdd, onRemove, newData, isIngredientDetailsOpen, setIngredientDetailsOpen }) {
+
+function BurgerIngredients() {
   const [current, setCurrent] = useState("one");
   const bunsRef = useRef(null);
   const saucesRef = useRef(null);
   const mainsRef = useRef(null);
+  const contentRef = useRef(null);
+  
+  const handleScroll = () => {
+    const contentTop = contentRef.current.getBoundingClientRect().top;
+    const bunsTop = bunsRef.current.getBoundingClientRect().top;
+    const saucesTop = saucesRef.current.getBoundingClientRect().top;
+    const mainsTop = mainsRef.current.getBoundingClientRect().top;
+
+    const diffBuns = Math.abs(contentTop - bunsTop);
+    const diffSauces = Math.abs(contentTop - saucesTop);
+    const diffMains = Math.abs(contentTop - mainsTop);
+
+    if (diffBuns < diffSauces && diffBuns < diffMains) {
+      setCurrent("one");
+    } else if (diffSauces < diffBuns && diffSauces < diffMains) {
+      setCurrent("two");
+    } else {
+      setCurrent("three");
+    }
+  };
+
+  useEffect(() => {
+    const contentNode = contentRef.current;
+    contentNode.addEventListener("scroll", handleScroll);
+    return () => {
+      contentNode.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   return (
     <>
@@ -299,18 +296,12 @@ function BurgerIngredients({ ingredients, onAdd, onRemove, newData, isIngredient
           saucesRef={saucesRef}
           mainsRef={mainsRef}
         />
-        <div className={`${style.content} ${style.custom__scrollbar}`}>
+        <div className={`${style.content} ${style.custom__scrollbar}`} ref={contentRef}>
           <ul className={`${style.list}`}>
             <CardSets
-              newData={newData}
-              ingredients={ingredients}
-              isIngredientDetailsOpen = {isIngredientDetailsOpen}
-              setIngredientDetailsOpen = {setIngredientDetailsOpen}
               bunsRef={bunsRef}
               saucesRef={saucesRef}
               mainsRef={mainsRef}
-              onAdd={onAdd}
-              onRemove={onRemove}
             />
           </ul>
         </div>
@@ -318,11 +309,5 @@ function BurgerIngredients({ ingredients, onAdd, onRemove, newData, isIngredient
     </>
   );
 }
-
-BurgerIngredients.propTypes = {
-  ingredients: PropTypes.arrayOf(IngredientType).isRequired,
-  onAdd: PropTypes.func.isRequired,
-  onRemove: PropTypes.func.isRequired,
-};
 
 export default BurgerIngredients;

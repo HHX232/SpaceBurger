@@ -35,16 +35,16 @@ import {
          ...state,
          ingredients: [...state.ingredients, action.payload]
        };
-       case REMOVE_INGREDIENT:
-         return {
-           ...state,
-           ingredients: state.ingredients ? state.ingredients.filter((item) => item._id !== action.payload) : []
-         };
-     case REORDER_INGREDIENTS:
-       return {
-         ...state,
-         ingredients: action.payload ?? []
-       };
+        case REMOVE_INGREDIENT:
+          return {
+            ...state,
+            ingredients: state.ingredients.filter((item) => item.generatedId !== action.payload),
+          };
+          case REORDER_INGREDIENTS:
+            return {
+              ...state,
+              ingredients: action.payload ?? []
+            };
      default:
        return state;
    }

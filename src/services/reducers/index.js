@@ -3,6 +3,7 @@ import ingredientReducer from '../reducers/ingredient-reducer';
 import constructorReducer from '../reducers/constructor-reducer'
 import ingredientDetailsReducer from '../reducers/ingredient-details-open-reducer'
 import orderDetailsReducer from '../reducers/order-details-reducer'
+
 const rootReducer = combineReducers({
    //ingredients берется с сервера и прекрасно работает вообще
     ingredients: ingredientReducer,
