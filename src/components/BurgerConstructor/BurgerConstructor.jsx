@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import PropTypes from "prop-types";
 import style from "../BurgerConstructor/BurgerConstructor.module.css";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,9 +9,23 @@ import {
   DragIcon,
   Button,
 } from "@ya.praktikum/react-developer-burger-ui-components";
-import IngredientType from '../../utils/types';
-import { removeIngredient, reorderIngredients } from '../../services/actions/constructor-action';
-import { submitOrder } from '../../services/actions/order-details-action';
+import IngredientType from "../../utils/types";
+import {
+  addIngredient,
+  removeIngredient,
+  reorderIngredients,  // импортируем действие
+} from "../../services/actions/constructor-action";
+import { submitOrder } from "../../services/actions/order-details-action";
+import { useDrop } from "react-dnd";
+import { v4 as uuidv4 } from "uuid";
+
+const generateUniqueId = (ingredients) => {
+  let newId = uuidv4();
+  while (ingredients.some(item => item.generatedId === newId)) {
+    newId = uuidv4();
+  }
+  return newId;
+};
 
 function BurgerItem({ generatedId, text, price, image }) {
   const dispatch = useDispatch();
@@ -43,10 +57,9 @@ BurgerItem.propTypes = {
 
 function BurgerList({ ingredients }) {
   const dispatch = useDispatch();
-
-  function setIngredients(items) {
+  const setIngredients = (items) => {
     dispatch(reorderIngredients(items));
-  }
+  };
 
   return (
     <Reorder.Group
@@ -87,11 +100,21 @@ BurgerList.propTypes = {
 };
 
 const BurgerConstructor = () => {
-  
   const dispatch = useDispatch();
   const { ingredients, bun } = useSelector((state) => state.constructorList);
   const { loading, error } = useSelector((state) => state.orderDetails);
-console.log("ingredients: ", ingredients, "\n bun: ", bun)
+
+  const [{ isOver }, dropRef] = useDrop(() => ({
+    accept: "ingridient",
+    drop: (item) => {
+      const generatedId = generateUniqueId(ingredients);
+      const newItem = { ...item, generatedId };
+      dispatch(addIngredient(newItem));
+    },
+    collect: (monitor) => ({
+      isOver: !!monitor.isOver(),
+    }),
+  }));
 
   const handleOrder = () => {
     const ingredientIds = [
@@ -99,18 +122,18 @@ console.log("ingredients: ", ingredients, "\n bun: ", bun)
       ...ingredients.map((item) => item.originalId),
       bun.originalId,
     ];
-    console.log("Submitting order with ingredients:", ingredientIds);
-
     dispatch(submitOrder(ingredientIds));
   };
 
-  const totalPrice = ingredients.reduce(
-    (total, item) => total + item.price,
-    bun ? bun.price * 2 : 0
-  );
+  const totalPrice = useMemo(() => {
+    return ingredients.reduce(
+      (total, item) => total + item.price,
+      bun ? bun.price * 2 : 0
+    );
+  }, [ingredients, bun]);
 
   return (
-    <div className={`${style.constructor} ml-4 mt-25`}>
+    <div ref={dropRef} className={`${style.constructor} ml-4 mt-25`}>
       {bun && (
         <div className={`${style.constructor__el} ml-8`}>
           <ConstructorElement
@@ -141,10 +164,16 @@ console.log("ingredients: ", ingredients, "\n bun: ", bun)
           </p>
           <CurrencyIcon type="primary" className={style.total_icon} />
         </div>
-        <Button onClick={handleOrder} htmlType="button" type="primary" size="large" disabled={loading}>
-          {loading ? 'Отправка...' : 'Оформить заказ'}
+        <Button
+          onClick={handleOrder}
+          htmlType="button"
+          type="primary"
+          size="large"
+          disabled={loading}
+        >
+          {loading ? "Отправка..." : "Оформить заказ"}
         </Button>
-        {error && <p style={{ color: 'red' }}>Ошибка: {error}</p>}
+        {error && <p style={{ color: "red" }}>Ошибка: {error}</p>}
       </div>
     </div>
   );

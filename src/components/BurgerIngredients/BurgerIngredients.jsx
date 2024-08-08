@@ -1,22 +1,62 @@
 import { useState, useRef, useEffect } from "react";
 import PropTypes from "prop-types";
-import { Tab, Counter, CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
+import {
+  Tab,
+  Counter,
+  CurrencyIcon,
+} from "@ya.praktikum/react-developer-burger-ui-components";
 import style from "./BurgerIngredients.module.css";
 import { useSelector, useDispatch } from "react-redux";
-import { addIngredient, removeIngredient } from '../../services/actions/constructor-action';
-import { openIngredientDetails } from '../../services/actions/ingredient-details-open-action';
-import { v4 as uuidv4 } from 'uuid';
+import {
+  addIngredient,
+  removeIngredient,
+} from "../../services/actions/constructor-action";
+import { openIngredientDetails } from "../../services/actions/ingredient-details-open-action";
+import { v4 as uuidv4 } from "uuid";
+import { useDrag } from "react-dnd";
+import useOnScreen from "../../hooks/onScreen.hook";
 
-const Card = ({ id, image, price, type, name, ingredients, proteins, fat, carbohydrates, calories, food_title }) => {
+const Card = ({
+  id,
+  image,
+  price,
+  type,
+  name,
+  ingredients,
+  proteins,
+  fat,
+  carbohydrates,
+  calories,
+  food_title,
+}) => {
   const [count, setCount] = useState(0);
   const [inBasket, setInBasket] = useState(false);
   const dispatch = useDispatch();
+
+  const [{ isDragging }, dragRef] = useDrag(
+    () => ({
+      type: "ingridient",
+      item: {
+        originalId: id,
+        generatedId: uuidv4(),
+        text: name,
+        price,
+        image,
+        type,
+      },
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
+    }),
+    []
+  );
 
   const setIngredientDetailsOpen = (item) => {
     dispatch(openIngredientDetails(item));
   };
 
   const onAdd = (item) => {
+    console.log(item);
     dispatch(addIngredient(item));
   };
 
@@ -25,12 +65,20 @@ const Card = ({ id, image, price, type, name, ingredients, proteins, fat, carboh
   };
 
   const onOneClick = () => {
-    setIngredientDetailsOpen({ isOpen: true, proteins, fat, carbohydrates, calories, image, food_title });
+    setIngredientDetailsOpen({
+      isOpen: true,
+      proteins,
+      fat,
+      carbohydrates,
+      calories,
+      image,
+      food_title,
+    });
   };
 
   const handleClick = (e) => {
     e.preventDefault();
-    const generatedId = uuidv4();
+    let generatedId = uuidv4();
     if (type === "bun") {
       onAdd({ originalId: id, generatedId, text: name, price, image, type });
       return;
@@ -41,7 +89,7 @@ const Card = ({ id, image, price, type, name, ingredients, proteins, fat, carboh
     setCount(count + 1);
     onAdd({ originalId: id, generatedId, text: name, price, image, type });
   };
-  
+
   const handleContextMenu = (e) => {
     e.preventDefault();
     setCount(count - 1);
@@ -59,6 +107,10 @@ const Card = ({ id, image, price, type, name, ingredients, proteins, fat, carboh
 
   return (
     <div
+      ref={dragRef}
+      style={{
+        border: isDragging ? "2px solid purple" : "2px solid transparent",
+      }}
       className={style.card}
       onContextMenu={handleClick}
       onDoubleClick={handleClick}
@@ -92,10 +144,21 @@ Card.propTypes = {
   ingredients: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
-const CardTitle = ({ title, refProp }) => {
+const CardTitle = ({ title, refProp, onShow, onHide }) => {
+
+  const ref = useRef();
+  const isVisible = useOnScreen(refProp);
+
+  // Отслеживаю видимость заголовка
+  useEffect(() => {
+    if (!onShow) onShow = () => {};
+    if (!onHide) onHide = () => {};
+    isVisible ? onShow() : onHide();
+  }, [isVisible]);
+
   return (
     <h2 ref={refProp} className="text text_type_main-medium mb-6">
-      {title}
+      <span ref={ref}>{title}</span>
     </h2>
   );
 };
@@ -103,21 +166,28 @@ const CardTitle = ({ title, refProp }) => {
 CardTitle.propTypes = {
   title: PropTypes.string.isRequired,
   refProp: PropTypes.oneOfType([
-    PropTypes.func, 
-    PropTypes.shape({ current: PropTypes.instanceOf(Element) })
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
   ]),
 };
 
-const CardSets = ({ bunsRef, saucesRef, mainsRef }) => {
-  const { global_ingredients } = useSelector(state => state.ingredients);
-  const { ingredients } = useSelector(state => state.constructorList);
+const CardSets = ({ bunsRef, saucesRef, mainsRef, setCurrentTab }) => {
+  const { global_ingredients } = useSelector((state) => state.ingredients);
+  const { ingredients } = useSelector((state) => state.constructorList);
   const buns = global_ingredients.filter((item) => item.type === "bun");
   const sauces = global_ingredients.filter((item) => item.type === "sauce");
   const mains = global_ingredients.filter((item) => item.type === "main");
+  const [bunsVisible, setBunsVisible] = useState(true);
 
+  // У компонентов CardTitle слушаю колбэки onHide и onShow и меняю текущий Tab
   return (
     <div>
-      <CardTitle refProp={bunsRef} title="Булочки" />
+      <CardTitle
+        title="Булочки"
+        onHide={() => setCurrentTab("two")}
+        onShow={() => setCurrentTab("one")}
+        refProp={bunsRef}
+      />
       <div className={`${style.cards} mb-10 ml-4`}>
         {buns.map((bun) => (
           <Card
@@ -136,7 +206,7 @@ const CardSets = ({ bunsRef, saucesRef, mainsRef }) => {
           />
         ))}
       </div>
-      <CardTitle refProp={saucesRef} title="Соусы" />
+      <CardTitle onShow={() => !bunsVisible && setCurrentTab("two")} onHide={() => setCurrentTab("three")} refProp={saucesRef} title="Соусы" />
       <div className={`${style.cards} mb-10 ml-4`}>
         {sauces.map((sauce) => (
           <Card
@@ -155,7 +225,7 @@ const CardSets = ({ bunsRef, saucesRef, mainsRef }) => {
           />
         ))}
       </div>
-      <CardTitle refProp={mainsRef} title="Начинки" />
+      <CardTitle onShow={() => setBunsVisible(false)} refProp={mainsRef} title="Начинки" />
       <div className={`${style.cards} mb-10 ml-4`}>
         {mains.map((main) => (
           <Card
@@ -180,20 +250,26 @@ const CardSets = ({ bunsRef, saucesRef, mainsRef }) => {
 
 CardSets.propTypes = {
   bunsRef: PropTypes.oneOfType([
-    PropTypes.func, 
-    PropTypes.shape({ current: PropTypes.instanceOf(Element) })
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
   ]).isRequired,
   saucesRef: PropTypes.oneOfType([
-    PropTypes.func, 
-    PropTypes.shape({ current: PropTypes.instanceOf(Element) })
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
   ]).isRequired,
   mainsRef: PropTypes.oneOfType([
-    PropTypes.func, 
-    PropTypes.shape({ current: PropTypes.instanceOf(Element) })
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
   ]).isRequired,
 };
 
-const TabsComponent = ({ current, setCurrent, bunsRef, saucesRef, mainsRef }) => {
+const TabsComponent = ({
+  current,
+  setCurrent,
+  bunsRef,
+  saucesRef,
+  mainsRef,
+}) => {
   const handleTabClick = (value) => {
     setCurrent(value);
     if (value === "one") {
@@ -236,16 +312,16 @@ TabsComponent.propTypes = {
   current: PropTypes.string.isRequired,
   setCurrent: PropTypes.func.isRequired,
   bunsRef: PropTypes.oneOfType([
-    PropTypes.func, 
-    PropTypes.shape({ current: PropTypes.instanceOf(Element) })
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
   ]).isRequired,
   saucesRef: PropTypes.oneOfType([
-    PropTypes.func, 
-    PropTypes.shape({ current: PropTypes.instanceOf(Element) })
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
   ]).isRequired,
   mainsRef: PropTypes.oneOfType([
-    PropTypes.func, 
-    PropTypes.shape({ current: PropTypes.instanceOf(Element) })
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
   ]).isRequired,
 };
 
@@ -255,7 +331,7 @@ function BurgerIngredients() {
   const saucesRef = useRef(null);
   const mainsRef = useRef(null);
   const contentRef = useRef(null);
-  
+
   const handleScroll = () => {
     const contentTop = contentRef.current.getBoundingClientRect().top;
     const bunsTop = bunsRef.current.getBoundingClientRect().top;
@@ -296,12 +372,16 @@ function BurgerIngredients() {
           saucesRef={saucesRef}
           mainsRef={mainsRef}
         />
-        <div className={`${style.content} ${style.custom__scrollbar}`} ref={contentRef}>
+        <div
+          className={`${style.content} ${style.custom__scrollbar}`}
+          ref={contentRef}
+        >
           <ul className={`${style.list}`}>
             <CardSets
               bunsRef={bunsRef}
               saucesRef={saucesRef}
               mainsRef={mainsRef}
+              setCurrentTab={setCurrent}
             />
           </ul>
         </div>
