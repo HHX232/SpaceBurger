@@ -14,7 +14,7 @@ const initialState = {
   loading: false,
   error: null,
 };
-
+ 
 const orderDetailsReducer = (state = initialState, action) => {
   switch (action.type) {
     case ORDER_DETAILS_OPEN:

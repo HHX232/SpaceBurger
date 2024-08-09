@@ -1,5 +1,5 @@
 // actions/order-details-action.js
-
+import {request} from '../../utils/responses'
 export const ORDER_DETAILS_OPEN = "ORDER_DETAILS_OPEN";
 export const ORDER_DETAILS_CLOSE = "ORDER_DETAILS_CLOSE";
 export const ORDER_REQUEST = "ORDER_REQUEST";
@@ -33,27 +33,21 @@ export const orderFailure = (error) => ({
 export const submitOrder = (ingredients) => {
   return async (dispatch) => {
     dispatch(orderRequest());
-    // console.log(ingredients)
     try {
-      const response = await fetch('https://norma.nomoreparties.space/api/orders', {
+      if(ingredients[1] === undefined || ingredients[1] === null){
+        // console.log("new error")
+        alert("выберите сначала булочку, пожалуйста")
+        throw new Error("выберите булочку")}
+      const data = await request('orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ ingredients }),
       });
-      
-      if (!response.ok) {
-        throw new Error(`Server error: ${response.status}`);
-      }
 
-      const data = await response.json();
-      if (data.success) {
-        dispatch(orderSuccess(data.order.number));
-        dispatch(openOrderDetails(data.order.number));
-      } else {
-        throw new Error(data.message);
-      }
+      dispatch(orderSuccess(data.order.number));
+      dispatch(openOrderDetails(data.order.number));
     } catch (error) {
       console.error("Order submission failed:", error);
       dispatch(orderFailure(error.message));

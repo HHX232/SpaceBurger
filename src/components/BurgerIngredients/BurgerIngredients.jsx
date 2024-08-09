@@ -22,7 +22,6 @@ const Card = ({
   price,
   type,
   name,
-  ingredients,
   proteins,
   fat,
   carbohydrates,
@@ -32,7 +31,7 @@ const Card = ({
   const [count, setCount] = useState(0);
   const [inBasket, setInBasket] = useState(false);
   const dispatch = useDispatch();
-
+  const { ingredients, bun } = useSelector((state) => state.constructorList);
   const [{ isDragging }, dragRef] = useDrag(
     () => ({
       type: "ingridient",
@@ -80,6 +79,7 @@ const Card = ({
     e.preventDefault();
     let generatedId = uuidv4();
     if (type === "bun") {
+      dispatch(removeIngredient(bun.generatedId));
       onAdd({ originalId: id, generatedId, text: name, price, image, type });
       return;
     }
@@ -102,8 +102,12 @@ const Card = ({
 
   useEffect(() => {
     const c = ingredients.filter((item) => item.text === name).length;
-    setCount(c);
-  }, [ingredients, name]);
+    if (type === "bun" && bun.text === name) {
+      setCount(1);
+    } else {
+      setCount(c);
+    }
+  }, [ingredients, name, bun]);
 
   return (
     <div
@@ -130,6 +134,11 @@ const Card = ({
     </div>
   );
 };
+
+
+
+
+
 
 Card.propTypes = {
   id: PropTypes.string.isRequired,

@@ -31,19 +31,19 @@ function App() {
   };
 
 //получение списка ингридиентов с API + установка начальной булочки (считаю это лучше чем просто заглушки)
-useEffect(() => {
-  if (global_ingredients.length > 0) {
-    const firstBun = global_ingredients.find(ingredient => ingredient.type === 'bun');
-    if (firstBun) {
-      onAdd({
-        ...firstBun,
-        generatedId: uuidv4(),
-        originalId: firstBun._id,
-        text: firstBun.name 
-      });
-    }
-  }
-}, [global_ingredients]);
+// useEffect(() => {
+//   if (global_ingredients.length > 0) {
+//     const firstBun = global_ingredients.find(ingredient => ingredient.type === 'bun');
+//     if (firstBun) {
+//       onAdd({
+//         ...firstBun,
+//         generatedId: uuidv4(),
+//         originalId: firstBun._id,
+//         text: firstBun.name 
+//       });
+//     }
+//   }
+// }, [global_ingredients]);
 
 useEffect(() => {
   dispatch(takeIngredients());

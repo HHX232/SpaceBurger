@@ -13,7 +13,7 @@ import IngredientType from "../../utils/types";
 import {
   addIngredient,
   removeIngredient,
-  reorderIngredients,  // импортируем действие
+  reorderIngredients, 
 } from "../../services/actions/constructor-action";
 import { submitOrder } from "../../services/actions/order-details-action";
 import { useDrop } from "react-dnd";
@@ -98,7 +98,7 @@ BurgerList.propTypes = {
     }).isRequired
   ).isRequired,
 };
-
+ 
 const BurgerConstructor = () => {
   const dispatch = useDispatch();
   const { ingredients, bun } = useSelector((state) => state.constructorList);
@@ -173,7 +173,7 @@ const BurgerConstructor = () => {
         >
           {loading ? "Отправка..." : "Оформить заказ"}
         </Button>
-        {error && <p style={{ color: "red" }}>Ошибка: {error}</p>}
+        {/* {error && <p style={{ color: "red" }}>Ошибка: {error}</p>} */}
       </div>
     </div>
   );
