@@ -107,7 +107,7 @@ const Card = ({
     } else {
       setCount(c);
     }
-  }, [ingredients, name, bun]);
+  }, [ingredients, name, bun.text, type]);
 
   return (
     <div

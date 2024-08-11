@@ -57,8 +57,9 @@ BurgerItem.propTypes = {
 
 function BurgerList({ ingredients }) {
   const dispatch = useDispatch();
-  const setIngredients = (items) => {
-    dispatch(reorderIngredients(items));
+  const setIngredients = (newItems) => {
+    // Передаем новый массив в reducer
+    dispatch(reorderIngredients(newItems));
   };
 
   return (
