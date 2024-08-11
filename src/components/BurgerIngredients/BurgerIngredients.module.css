@@ -22,21 +22,25 @@
  .list {
    height: 100%;
    overflow-y: auto;
-   padding: 0 16px; 
+   padding: 0 10px; 
    margin: 0;
    box-sizing: border-box;
    display: flex;
    flex-wrap: wrap;
  }
 
+ .list > div {
+  padding-right: 10px;
+ }
 
 .cards{
    width: 100%;
    display: flex;
    flex-wrap: wrap;
-   column-gap: 24px;
+   column-gap: 7px;
    row-gap: 36px;
 }
+
  .card {
    position: relative;
    display: flex;
@@ -45,6 +49,8 @@
    width:fit-content;
    text-align: center;
    max-width: 262px !important;
+   border-radius: 18px;
+   transition: border 0.2s ease;
  }
  
  .counter {

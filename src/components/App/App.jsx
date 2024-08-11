@@ -5,89 +5,64 @@ import BurgerConstructor from "../BurgerConstructor/BurgerConstructor";
 import style from './App.module.css';
 import OrderDetails from "../OrderDetails/OrderDetails";
 import IngredientDetails from '../IngredientDetails/IngredientDetails';
-import Modal from '../Modal/Modal'
-const initialBun = {
-  _id: "60666c42cc7b410027a1a9b1",
-  text: "Краторная булка N-200i",
-  type: "bun",
-  proteins: 80,
-  fat: 24,
-  carbohydrates: 53,
-  calories: 420,
-  price: 1255,
-  image: "https://code.s3.yandex.net/react/code/bun-02.png",
-  image_mobile: "https://code.s3.yandex.net/react/code/bun-02-mobile.png",
-  image_large: "https://code.s3.yandex.net/react/code/bun-02-large.png",
-  __v: 0,
-};
-const API = "https://norma.nomoreparties.space/api/ingredients"
+import Modal from '../Modal/Modal';
+import { useDispatch, useSelector } from 'react-redux';
+import { takeIngredients } from '../../services/actions/ingredient-action';
+import { addIngredient } from '../../services/actions/constructor-action';
+import { openIngredientDetails, closeIngredientDetails } from '../../services/actions/ingredient-details-open-action';
+import {openOrderDetails, closeOrderDetails} from '../../services/actions/order-details-action'
+import { v4 as uuidv4 } from 'uuid';
 
 function App() {
-  const [ingredients, setIngredients] = useState([]);
-  const [bun, setBun] = useState(initialBun);
-  const [newData, setNewData] = useState([]);
-  const [isOrderDetailsOpen, setOrderDetailsOpen] = useState(false);
-  const [isIngredientDetailsOpen, setIngredientDetailsOpen] = useState({isOpen:false, proteins:0,fat:0,carbohydrates:0,calories:110, image: initialBun.image, food_title:""});
-
-  useEffect(() => {
-    fetch(API)
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            }
-            return Promise.reject(`Ошибка ${response.status}`);
-        })
-        .then(data => setNewData(data.data))
-        .catch(error => console.error('Ошибка:', error));
-}, []);
-
+ 
+  //данные через redux
+  const {ingredientObject} = useSelector(store => store.ingredientDetails)
+  const isOpenOrderDetails = useSelector(store => store.orderDetails.isOpen);
+  const isOrdertitle = useSelector(store=> store.orderDetails.number)
+  const { global_ingredients } = useSelector(state => state.ingredients);
+  const dispatch = useDispatch();
 
   const onAdd = (item) => {
-    if (item.type === "bun") {
-      setBun(item);
-      return;
-    }
-    setIngredients([...ingredients, item]);
+    dispatch(addIngredient(item));
   };
 
-  const onRemove = (id) => {
-    setIngredients(ingredients.filter((item) => item._id !== id));
-  };
-  const openIngredientDetails = () =>{
-    setIngredientDetailsOpen({...isIngredientDetailsOpen, isOpen:true});
-  }
-  const closeIngredientDetails = () =>{
-    setIngredientDetailsOpen({...isIngredientDetailsOpen, isOpen:false});
-  }
-  const openOrderDetails = () => {
-    setOrderDetailsOpen(true);
+  const closeIngredientDetailsFunction = () => {
+   dispatch(closeIngredientDetails())
   };
 
-  const closeOrderDetails = () => {
-    setOrderDetailsOpen(false);
-  };
+//получение списка ингридиентов с API + установка начальной булочки (считаю это лучше чем просто заглушки)
+// useEffect(() => {
+//   if (global_ingredients.length > 0) {
+//     const firstBun = global_ingredients.find(ingredient => ingredient.type === 'bun');
+//     if (firstBun) {
+//       onAdd({
+//         ...firstBun,
+//         generatedId: uuidv4(),
+//         originalId: firstBun._id,
+//         text: firstBun.name 
+//       });
+//     }
+//   }
+// }, [global_ingredients]);
+
+useEffect(() => {
+  dispatch(takeIngredients());
+}, [dispatch]);
+  
+  const handleCloseOrderDetails = () => {
+    dispatch(closeOrderDetails());
+  }
+
   return (
-    <>
+    <> 
       <AppHeader />
       <main className={`${style.container} ${style.main_content}`}>
-        <BurgerIngredients
-          ingredients={ingredients}
-          onAdd={onAdd}
-          onRemove={onRemove}
-          newData={newData}
-          setIngredientDetailsOpen={setIngredientDetailsOpen}
-          isIngredientDetailsOpen={isIngredientDetailsOpen}
-        />
+        <BurgerIngredients/>
         <BurgerConstructor
-          ingredients={ingredients}
-          bun={bun}
-          onRemove={onRemove}
-          setIngredients={setIngredients}
-          openOrderDetails={openOrderDetails}
         />
       </main>
-      {isOrderDetailsOpen && <Modal onClose={closeOrderDetails}> <OrderDetails onClose={closeOrderDetails} /></Modal>}
-      {isIngredientDetailsOpen.isOpen && <Modal title="Детали ингредиента" onClose={closeIngredientDetails}> <IngredientDetails ingredientDetailsObject={isIngredientDetailsOpen} /></Modal>}
+      {isOpenOrderDetails && <Modal onClose={handleCloseOrderDetails}> <OrderDetails title={String(isOrdertitle) } /></Modal>}
+      {ingredientObject.isOpen && <Modal title="Детали ингредиента" onClose={closeIngredientDetailsFunction}> <IngredientDetails ingredientDetailsObject={ingredientObject} /></Modal>}
     </>
   );
 }
