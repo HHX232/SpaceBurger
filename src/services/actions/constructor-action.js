@@ -8,7 +8,7 @@ export const addIngredient = (ingredient) => ({
 });
 
 export const removeIngredient = (generatedId) => ({
-  type: REMOVE_INGREDIENT,
+  type: REMOVE_INGREDIENT, 
   payload: generatedId
 });
 

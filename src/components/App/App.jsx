@@ -9,9 +9,15 @@ import Modal from '../Modal/Modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { takeIngredients } from '../../services/actions/ingredient-action';
 import { addIngredient } from '../../services/actions/constructor-action';
-import { openIngredientDetails, closeIngredientDetails } from '../../services/actions/ingredient-details-open-action';
-import {openOrderDetails, closeOrderDetails} from '../../services/actions/order-details-action'
-import { v4 as uuidv4 } from 'uuid';
+import { closeIngredientDetails } from '../../services/actions/ingredient-details-open-action';
+import { closeOrderDetails} from '../../services/actions/order-details-action'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Register from "../Register/Register";
+import Login from "../Login/Login";
+import ForgotPassword from "../Forgot-password/ForgotPassword";
+import ResetPassword from "../Reset-password/ResetPassword";
+import Profile from "../Profile/Profile";
+import NotFoundPage from "../NotFound/NotFound";
 
 function App() {
  
@@ -55,12 +61,25 @@ useEffect(() => {
 
   return (
     <> 
+      
+
+      <Router>
       <AppHeader />
-      <main className={`${style.container} ${style.main_content}`}>
-        <BurgerIngredients/>
-        <BurgerConstructor
-        />
-      </main>
+        <Routes>
+          <Route path="/" element={ 
+            <main className={`${style.container} ${style.main_content}`}>
+            <BurgerIngredients/><BurgerConstructor/></main>}>
+          </Route>
+          <Route path="/register" element={<Register/>}/>
+          <Route path="/login" element={<Login />}/>
+          <Route path="/forgot-password" element={<ForgotPassword />}/>
+          <Route path="/reset-password" element={<ResetPassword />}/>
+          <Route path="/profile" element={<Profile />}/>
+          <Route path="*" element={<NotFoundPage />}/>
+        </Routes>
+      </Router>
+
+     
       {isOpenOrderDetails && <Modal onClose={handleCloseOrderDetails}> <OrderDetails title={String(isOrdertitle) } /></Modal>}
       {ingredientObject.isOpen && <Modal title="Детали ингредиента" onClose={closeIngredientDetailsFunction}> <IngredientDetails ingredientDetailsObject={ingredientObject} /></Modal>}
     </>

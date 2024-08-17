@@ -18,6 +18,7 @@ import {
 import { submitOrder } from "../../services/actions/order-details-action";
 import { useDrop } from "react-dnd";
 import { v4 as uuidv4 } from "uuid";
+import { Link } from "react-router-dom";
 
 const generateUniqueId = (ingredients) => {
   let newId = uuidv4();
@@ -174,6 +175,7 @@ const BurgerConstructor = () => {
         >
           {loading ? "Отправка..." : "Оформить заказ"}
         </Button>
+        {/* <Link to="/login">Перейти на регистрацию</Link> */}
         {/* {error && <p style={{ color: "red" }}>Ошибка: {error}</p>} */}
       </div>
     </div>

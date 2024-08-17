@@ -23,7 +23,7 @@ export const orderRequest = () => ({
 export const orderSuccess = (orderNumber) => ({
   type: ORDER_SUCCESS,
   orderNumber,
-});
+}); 
 
 export const orderFailure = (error) => ({
   type: ORDER_FAILURE,

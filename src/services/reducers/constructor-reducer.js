@@ -4,7 +4,7 @@ import {
   REORDER_INGREDIENTS,
 } from '../actions/constructor-action';
 import starIMG from '../../images/star-svgrepo-com.svg';
-
+ 
 const initialState = {
   ingredients: [], 
   bun: {

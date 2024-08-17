@@ -5,7 +5,7 @@ import {
  } from '../actions/ingredient-action';
  
  const initialState = {
-   global_ingredients: [],
+   global_ingredients: [], 
    ingredientsProgress: false,
    ingredientsFaild: false
  };

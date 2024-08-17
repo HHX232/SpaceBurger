@@ -3,16 +3,17 @@ import { BurgerIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import { ListIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import { Logo } from "@ya.praktikum/react-developer-burger-ui-components";
 import { ProfileIcon } from "@ya.praktikum/react-developer-burger-ui-components";
-
+import style from './AppHeader.module.css'
 import stylesHeader from "./AppHeader.module.css";
+import { Link, Route } from "react-router-dom";
 
 function NavItem(props) {
   return (
     <li className={`${stylesHeader.nav__item} pt-4 pb-4  pr-5`}>
       {props.icon}
-      <a className={props.textType} href={props.href}>
+      <Link className={props.textType} to={props.to}>
         {props.text}
-      </a>
+      </Link>
     </li>
   );
 }
@@ -36,16 +37,14 @@ class ProfileButton extends React.Component {
     const buttonLink = isActive ? "#" : "#";
 
     return (
-      <a
-        href={buttonLink}
-        className={`${stylesHeader.profile__box} pt-4 pb-4 pl-5 pr-5`}
-        onDoubleClick={this.handleDoubleClick}
-      >
+      <Link className={`${style.profile__box}`} to="/profile">
+
         <ProfileIcon type="secondary" />
         <p className="text text_type_main-default text__disactive">
           {buttonText}
         </p>
-      </a>
+        </Link>
+   
     );
   }
 }
@@ -57,22 +56,28 @@ function AppHeader() {
       <div className={stylesHeader.header__container}>
         <div className={stylesHeader.header__inner}>
           <ul className={stylesHeader.nav__list}>
+
             <NavItem
               textType="text text_type_main-default text__active"
               icon={<BurgerIcon />}
               text="Конструктор"
-              href="#"
+              to="/"
             />
+            
+  
             <NavItem
               textType="text text_type_main-default text__disactive"
               icon={<ListIcon type="secondary" />}
               text="Лента заказов"
-              href="#"
+              to="/"
             />
           </ul>
           <div className={stylesHeader.header__logo}>
-            <Logo />
+            <Link to="/">
+            <Logo /></Link>
           </div>
+          
+        
           <ProfileButton />
         </div>
       </div>

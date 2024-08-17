@@ -9,6 +9,7 @@ import { thunk } from "redux-thunk";
 import rootReducer from "./services/reducers";
 import { DndProvider } from "react-dnd"
 import { HTML5Backend } from "react-dnd-html5-backend"
+// import AppHeader from "../src/components/AppHeader/AppHeader";
 
 // Создание composeEnhancers для поддержки Redux DevTools
 const composeEnhancers =
@@ -21,7 +22,7 @@ const store = createStore(
   rootReducer,
   composeEnhancers(applyMiddleware(thunk))
 );
-
+ 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
