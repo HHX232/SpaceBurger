@@ -1,4 +1,3 @@
-// actions/order-details-action.js
 import {request} from '../../utils/responses'
 export const ORDER_DETAILS_OPEN = "ORDER_DETAILS_OPEN";
 export const ORDER_DETAILS_CLOSE = "ORDER_DETAILS_CLOSE";
@@ -35,7 +34,7 @@ export const submitOrder = (ingredients) => {
     dispatch(orderRequest());
     try {
       if(ingredients[1] === undefined || ingredients[1] === null){
-        // console.log("new error")
+
         alert("выберите сначала булочку, пожалуйста")
         throw new Error("выберите булочку")}
       const data = await request('orders', {

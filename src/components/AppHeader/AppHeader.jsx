@@ -1,11 +1,12 @@
-import React from "react";
+import React, {useState, useCallback, useEffect} from "react";
 import { BurgerIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import { ListIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import { Logo } from "@ya.praktikum/react-developer-burger-ui-components";
 import { ProfileIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import style from './AppHeader.module.css'
 import stylesHeader from "./AppHeader.module.css";
-import { Link, Route } from "react-router-dom";
+import { Link} from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function NavItem(props) {
   return (
@@ -17,37 +18,38 @@ function NavItem(props) {
     </li>
   );
 }
+const ProfileButton = () => {
+  const [isActive, setIsActive] = useState(false);
+  const [userIsLogin, setUserIsLogin] = useState(false);
+  const userRegister = useSelector((state) => state.register);
 
-class ProfileButton extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isActive: false,
-    };
-    this.handleDoubleClick = this.handleDoubleClick.bind(this);
-  }
-  handleDoubleClick() {
-    this.setState((prevState) => ({
-      isActive: !prevState.isActive,
-    }));
-  }
-  render() {
-    const { isActive } = this.state;
-    const buttonText = isActive ? "Войти" : "Личный кабинет";
-    const buttonLink = isActive ? "#" : "#";
+  const handleDoubleClick = useCallback(() => {
+    setIsActive((prevIsActive) => !prevIsActive);
+  }, []);
 
-    return (
-      <Link className={`${style.profile__box}`} to="/profile">
+  useEffect(() => {
+    if (userRegister.user.name && userRegister.accessToken) {
+      setUserIsLogin(true); 
+    } else {
+      setUserIsLogin(false); 
+    }
+  }, [userRegister]);
 
-        <ProfileIcon type="secondary" />
-        <p className="text text_type_main-default text__disactive">
-          {buttonText}
-        </p>
-        </Link>
-   
-    );
-  }
-}
+  const buttonText = userIsLogin ? "Личный кабинет" : "Войти"; 
+
+  return (
+    <Link
+      className={`${style.profile__box}`}
+      to="/profile"
+      onDoubleClick={handleDoubleClick}
+    >
+      <ProfileIcon type="secondary" />
+      <p className="text text_type_main-default text__disactive">
+        {buttonText}
+      </p>
+    </Link>
+  );
+};
 
 function AppHeader() {
   return (

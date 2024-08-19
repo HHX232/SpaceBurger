@@ -1,4 +1,4 @@
-import {REGISTER_IN_PROGRESS, REGISTER_FAILED, REGISTER_SUCCESS} from '../actions/register-action'
+import {REGISTER_IN_PROGRESS, REGISTER_FAILED, REGISTER_SUCCESS, CREATE_NEW_ACCESS_TOKEN, LOGIN_VALUE_DATA} from '../actions/register-action'
 const initialState = {
    loading: false,
    success: false,
@@ -7,7 +7,7 @@ const initialState = {
      email: "",
      name: ""
    },
-   accessToken: "Bearer ...",
+   accessToken: "Bearer ...", 
    refreshToken: "",
    expiresIn: 0, 
    timestamp: 0, 
@@ -34,6 +34,10 @@ const initialState = {
        };
      case REGISTER_FAILED:
        return { ...state, loading: false, success: false, errorRegister: true };
+       case CREATE_NEW_ACCESS_TOKEN:
+        return {...state,accessToken: action.accessToken}
+        case LOGIN_VALUE_DATA:
+       return {...state, accessToken: action.accessToken, refreshToken: action.refreshToken, user:{name: action.name, email: action.email}, success: true,timestamp: Date.now(),errorRegister: false, loading: false,expiresIn:1200 }
      default:
        return state;
    }}

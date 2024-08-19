@@ -17,8 +17,8 @@ const Register = () =>{
 
   }
 
-   const onButtonSubmit = async () => {
-     await dispatch(registerUser(userdata.email, userdata.password, userdata.name));
+   const onButtonSubmit = () => {
+      dispatch(registerUser(userdata.email, userdata.password, userdata.name));
    }
 
    useEffect(() => {
@@ -28,7 +28,7 @@ const Register = () =>{
         alert("Какая-то ошибочка");
       }
     }, [userRegister, navigate]);
-    
+
   return <section className={`${style.register_section} container`}>
    <h2 className={`${style.register_title} text text_type_main-medium`}>Регистрация</h2>
    <div className={`${style.inputs_box} `}>

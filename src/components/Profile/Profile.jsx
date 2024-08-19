@@ -1,14 +1,60 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import style from './Profile.module.css'
 import { Link } from "react-router-dom";
 import { PasswordInput, EmailInput, Input, EditIcon, Button } from '@ya.praktikum/react-developer-burger-ui-components'
-const Profile = () => {
-   const [value, setValue] = useState('bob@example.com')
-   const [value2, setValue2] = useState('bob@example.com')
+import { getCookie, updateAccessToken } from "../../services/actions/register-action";
+import { request } from "../../utils/responses";
+import { useDispatch, useSelector } from "react-redux";
 
-  const onChange = e => {
-    setValue(e.target.value)
-  }
+
+const Profile = () => {
+   const [profileUserData, setUserData] = useState({name: "yourName", email: "yourEmail@gmail.com2", password: "Numbers12$$" })
+   const [startInputsValue, setStartInputsValue] = useState({name: "yourName", email: "yourEmail@gmail.com2", password: "Numbers12$$"})
+   const [boolUserAccess, setBoolUserAccess] = useState(false)
+
+   const dispatch = useDispatch()
+   const refreshToken = getCookie('refreshToken');
+   const accessTokenFromStore = useSelector(store => store.register.accessToken);
+   const accessToken = accessTokenFromStore.split(' ')[1]
+   // console.log("accessTokenFromStore: ", accessTokenFromStore)
+   // console.log("accessToken: ", accessToken)
+
+   const getUserInfoFromApi = async () =>{
+      console.log("refreshToken",refreshToken)
+      if(!boolUserAccess){
+   
+         try{ 
+            await updateAccessToken(refreshToken)
+            setBoolUserAccess(true)}catch(error){
+               console.error("some message", error)
+            }
+        
+      }
+      if(boolUserAccess){}
+     const data =  await request("auth/user", {
+         method: 'GET',
+         headers: {
+           'Authorization': `Bearer ${accessToken}`,
+         },
+       })
+       const {success, user} = data
+       setUserData({...profileUserData, name: user.name, email: user.email})
+   }
+   
+
+   useEffect(()=>{
+      const reloadAccessToken = async () =>{
+         await dispatch(updateAccessToken(refreshToken)) 
+      }
+      reloadAccessToken()
+      getUserInfoFromApi()
+      setStartInputsValue({...profileUserData})
+   }, [])
+   
+   
+     const onChange = e => {
+      setUserData({...profileUserData, [e.target.name]: e.target.value})
+     }
    return <section className={`container pt-30`}>
       <div className={`${style.profile_content}`}>
          <ul className={`${style.profile_links}  `}>
@@ -29,32 +75,32 @@ const Profile = () => {
          </ul>
          <ul className={`${style.inputs_list}`}>
             <li className={`${style.inputs_list_item}`}>
-            <EmailInput
+            <PasswordInput
         onChange={onChange}
-        value={value}
-        name={'text'}
+        value={profileUserData.name}
+        name={'name'}
         placeholder="Имя"
-        isIcon={true}
+      //   isIcon={true}
         extraClass="mb-6"
+         icon="EditIcon"
       />
             </li>
             <li className={`${style.inputs_list_item}`}>
             <EmailInput
         onChange={onChange}
-        value={value}
-        name={'mail'}
+        value={profileUserData.email}
+        name={'email'}
         placeholder="Логин"
-        isIcon={true}
+      //   isIcon={true}
         extraClass="mb-6"
       />
             </li>
             <li className={`${style.inputs_list_item}`}>
             <PasswordInput
         onChange={onChange}
-        value={value}
+        value={profileUserData.password}
         name={'password'}
-        icon="EditIcon"
-        
+         icon="EditIcon"
       />
             </li>
          </ul>

@@ -28,9 +28,9 @@ function App() {
   const { global_ingredients } = useSelector(state => state.ingredients);
   const dispatch = useDispatch();
 
-  const onAdd = (item) => {
-    dispatch(addIngredient(item));
-  };
+  // const onAdd = (item) => {
+  //   dispatch(addIngredient(item));
+  // };
 
   const closeIngredientDetailsFunction = () => {
    dispatch(closeIngredientDetails())
