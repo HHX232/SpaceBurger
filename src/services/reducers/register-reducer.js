@@ -7,7 +7,6 @@ const initialState = {
      email: "",
      name: ""
    },
-   accessToken: "Bearer ...", 
    refreshToken: "",
    expiresIn: 0, 
    timestamp: 0, 

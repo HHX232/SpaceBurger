@@ -111,19 +111,18 @@ export const logout = () =>{
 //при входе в существующий акк
 export const newLoginData = (email, name, accessToken, refreshToken) => {
   setCookie('refreshToken', refreshToken);
+  setCookie('accessToken', accessToken, { expires: new Date(Date.now() + 20 * 60 * 1000) }); // 20 minutes
 
   return {
     type: LOGIN_VALUE_DATA,
     email,
     name,
-    accessToken,
-    refreshToken
+    refreshToken,
   };
 };
 
 //при регистрации
 export const registerUser = (registerMail, registerPassword, registerName) => {
-   
   return async (dispatch) => {
     dispatch(registerInProgress());
     try {
@@ -138,50 +137,48 @@ export const registerUser = (registerMail, registerPassword, registerName) => {
       const { accessToken, refreshToken, user } = data;
 
       setCookie('refreshToken', refreshToken);
-      dispatch(registerSuccess(user, accessToken, refreshToken, 1200 
-       ));
+      setCookie('accessToken', accessToken, { expires: new Date(Date.now() + 20 * 60 * 1000) }); // 20 minutes
+      dispatch(registerSuccess(user, refreshToken, 1200));
 
     } catch (error) {
       console.error("Registration failed:", error);
-      
-      if (error.response) {
-        console.log("Error response data:", error.response.data);
-      }
       dispatch(registerFailed(error.message));
     }
   };
 };
 
+
 //обновление токена каждые 20 мин
-export const updateAccessToken =  () =>{
+export const updateAccessToken = () => {
   return async function (dispatch) {
     const refreshToken = getCookie('refreshToken');
-    console.log("refreshToken from updateAccessToken: ", refreshToken)
-    if(!refreshToken){
-      //добавить перенаправление на регистрацию или же allert хотя бы
-      console.error("refresh token die ;( ")
-      throw new Error("please create new refresh token ")
+    if (!refreshToken) {
+      console.error("Refresh token is missing");
+      throw new Error("Please create a new refresh token");
     }
-    try{
-    const data = await request("auth/token", {
-      method: "POST",
-      header:{
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({token: refreshToken }),
-      
-    })
-    const { accessToken } = data;
-    dispatch(newAccessToken(accessToken));
-  }catch(error){
-      console.error(error);
-      console.log("error to submit new access token")
+    try {
+      const data = await request("auth/token", {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: refreshToken }),
+      });
+      const { accessToken } = data;
+      setCookie('accessToken', accessToken, { expires: new Date(Date.now() + 20 * 60 * 1000) }); // 20 minutes
+      dispatch(newAccessToken(accessToken));
+    } catch (error) {
+      console.error("Error updating access token:", error);
     }
-
   }
-}
+};
+
 setInterval(() => {
   updateAccessToken();
+  // const accessTokenFromCookie = getCookie('accessToken')
+  console.log("cookie был обновлен спустя какое то время")
 }, 19 * 60 * 1000);
+setInterval(() => {
+  updateAccessToken();
+  console.log("cookie был обновлен спустя какое то время")
+}, 19.7 * 60 * 1000);
 
 

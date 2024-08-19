@@ -8,21 +8,21 @@ import { useDispatch, useSelector } from "react-redux";
 
 
 const Profile = () => {
-   const [profileUserData, setUserData] = useState({name: "yourName", email: "yourEmail@gmail.com2", password: "Numbers12$$" })
-   const [startInputsValue, setStartInputsValue] = useState({name: "yourName", email: "yourEmail@gmail.com2", password: "Numbers12$$"})
-   const [boolUserAccess, setBoolUserAccess] = useState(false)
+   const [profileUserData, setUserData] = useState({name: "yourName", email: "yourEmail@gmail.com2", password: "Are you want create new password?" })
+   const [startInputsValue, setStartInputsValue] = useState({name: "yourName", email: "yourEmail@gmail.com2", password: "Are you want create new password?"})
+   const [boolUserAccess, setBoolUserAccess] = useState(false);
+   const [boolNewData, setBoolNewData] = useState(false);
+   const [boolSubmitNewData, setSubmitBoolNewData] = useState(false);
 
    const dispatch = useDispatch()
    const refreshToken = getCookie('refreshToken');
-   const accessTokenFromStore = useSelector(store => store.register.accessToken);
-   const accessToken = accessTokenFromStore.split(' ')[1]
+   const accessTokenFromCookie = getCookie('accessToken')
    // console.log("accessTokenFromStore: ", accessTokenFromStore)
-   // console.log("accessToken: ", accessToken)
-
+   // console.log("accessToken: ", accessTokenFromCookie)
+   const accessToken = accessTokenFromCookie.replace('Bearer%20', '');
    const getUserInfoFromApi = async () =>{
       console.log("refreshToken",refreshToken)
       if(!boolUserAccess){
-   
          try{ 
             await updateAccessToken(refreshToken)
             setBoolUserAccess(true)}catch(error){
@@ -37,24 +37,56 @@ const Profile = () => {
            'Authorization': `Bearer ${accessToken}`,
          },
        })
+       console.log(data)
        const {success, user} = data
        setUserData({...profileUserData, name: user.name, email: user.email})
    }
    
 
    useEffect(()=>{
-      const reloadAccessToken = async () =>{
-         await dispatch(updateAccessToken(refreshToken)) 
-      }
-      reloadAccessToken()
       getUserInfoFromApi()
       setStartInputsValue({...profileUserData})
    }, [])
    
    
-     const onChange = e => {
-      setUserData({...profileUserData, [e.target.name]: e.target.value})
-     }
+   const onChange = e => {
+      setUserData({ ...profileUserData, [e.target.name]: e.target.value });
+      setBoolNewData(true); // Показать кнопки сохранения
+   };
+
+   const onSaveChanges = async () => {
+      const payload = {
+         name: profileUserData.name,
+         email: profileUserData.email,
+         password: profileUserData.password !== startInputsValue.password ? profileUserData.password : '' 
+      };
+
+      try {
+         const data = await request("auth/user", {
+            method: 'PATCH',
+            headers: {
+               'Authorization': `Bearer ${accessToken}`,
+               'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload),
+         });
+
+         const { success, user } = data;
+         if (success) {
+            setStartInputsValue({ ...profileUserData, name: user.name, email: user.email });
+            setUserData({ ...profileUserData, name: user.name, email: user.email });
+            setBoolNewData(false); 
+         }
+      } catch (error) {
+         console.error("Error saving changes:", error);
+      }
+   };
+
+   const onCancelChanges = () => {
+      setUserData({ ...startInputsValue }); // Восстановление начальных значений
+      setBoolNewData(false);
+   };
+
    return <section className={`container pt-30`}>
       <div className={`${style.profile_content}`}>
          <ul className={`${style.profile_links}  `}>
@@ -103,6 +135,18 @@ const Profile = () => {
          icon="EditIcon"
       />
             </li>
+            {boolNewData ? <li className={`${style.inputs_list_item} mt-2`}>
+               <p className={`${style.submit_data} text text_type_main-default `}>Хотите сохранить изменения?</p>
+               <div className={`${style.button_box}`}>
+               <Button htmlType="button" type="primary" size="medium" onClick={onSaveChanges}>
+Сохранить
+</Button>
+<Button htmlType="button" type="secondary" size="large" onClick={onCancelChanges}>
+Отменить
+</Button>
+</div>
+            </li> : ""}
+            
          </ul>
       </div>
    </section>

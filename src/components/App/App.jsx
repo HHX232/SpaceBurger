@@ -18,6 +18,7 @@ import ForgotPassword from "../Forgot-password/ForgotPassword";
 import ResetPassword from "../Reset-password/ResetPassword";
 import Profile from "../Profile/Profile";
 import NotFoundPage from "../NotFound/NotFound";
+import { updateAccessToken } from "../../services/actions/register-action";
 
 function App() {
  
@@ -35,6 +36,13 @@ function App() {
   const closeIngredientDetailsFunction = () => {
    dispatch(closeIngredientDetails())
   };
+
+  setInterval(() => {
+   dispatch(updateAccessToken()) 
+  }, 19 * 60 * 1000);
+  setInterval(() => {
+   dispatch(updateAccessToken()) 
+  }, 19.7 * 60 * 1000);
 
 //получение списка ингридиентов с API + установка начальной булочки (считаю это лучше чем просто заглушки)
 // useEffect(() => {
