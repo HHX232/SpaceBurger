@@ -1,4 +1,4 @@
-import {REGISTER_IN_PROGRESS, REGISTER_FAILED, REGISTER_SUCCESS, CREATE_NEW_ACCESS_TOKEN, LOGIN_VALUE_DATA} from '../actions/register-action'
+import {REGISTER_IN_PROGRESS, REGISTER_FAILED, REGISTER_SUCCESS, CREATE_NEW_ACCESS_TOKEN, LOGIN_VALUE_DATA, UPDATE_SUCCESS_STATE, FORGOT_PASSWORD_VISITED} from '../actions/register-action'
 const initialState = {
    loading: false,
    success: false,
@@ -10,6 +10,7 @@ const initialState = {
    refreshToken: "",
    expiresIn: 0, 
    timestamp: 0, 
+   forgotPasswordVisited: false,
  };
  const registerReducer = (state = initialState, action) => {
    switch (action.type) {
@@ -37,6 +38,13 @@ const initialState = {
         return {...state,accessToken: action.accessToken}
         case LOGIN_VALUE_DATA:
        return {...state, accessToken: action.accessToken, refreshToken: action.refreshToken, user:{name: action.name, email: action.email}, success: true,timestamp: Date.now(),errorRegister: false, loading: false,expiresIn:1200 }
+       case UPDATE_SUCCESS_STATE:
+  return { ...state, success: action.success };
+  case FORGOT_PASSWORD_VISITED:
+    return {
+        ...state,
+        forgotPasswordVisited: true,
+    };
      default:
        return state;
    }}

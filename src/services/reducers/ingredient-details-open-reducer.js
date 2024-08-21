@@ -15,4 +15,4 @@ const ingredientDetailsReducer = (state=initialState, action)=>{
    }
 }
 
-export default ingredientDetailsReducer
+export default ingredientDetailsReducer 

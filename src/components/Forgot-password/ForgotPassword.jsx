@@ -1,18 +1,23 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import style from './ForgotPassword.module.css'
 import { PasswordInput, EmailInput, Input, EditIcon, Button } from '@ya.praktikum/react-developer-burger-ui-components'
 import { Link, useNavigate } from "react-router-dom";
 import {request} from '../../utils/responses'
+import { markForgotPasswordVisited } from "../../services/actions/register-action";
+import { useDispatch } from "react-redux";
 
 
 
 const ForgotPassword = () => {
   const [mailForgot, setMailForgot] = useState('yourmail@gmail.com')
   const navigate = useNavigate()
-
+  const dispatch = useDispatch()
   const onChange = e => {
     setMailForgot(e.target.value)
   }
+  useEffect(() => {
+    dispatch(markForgotPasswordVisited());
+}, [dispatch]);
 
   async function  onResButton(){
     const { success, message } = await request('password-reset', {

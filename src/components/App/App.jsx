@@ -18,7 +18,9 @@ import ForgotPassword from "../Forgot-password/ForgotPassword";
 import ResetPassword from "../Reset-password/ResetPassword";
 import Profile from "../Profile/Profile";
 import NotFoundPage from "../NotFound/NotFound";
-import { updateAccessToken } from "../../services/actions/register-action";
+import ProtectedRouteElement from "../ProtectedRouteElement/ProtectedRouteElement";
+import UnprotectedRouteElement from "../UnprotectedRouteElement/UnprotectedRouteElement";
+import ProtectedResetPasswordRoute from "../ProtectedResetPasswordRoute/ProtectedResetPasswordRoute";
 
 function App() {
  
@@ -36,13 +38,6 @@ function App() {
   const closeIngredientDetailsFunction = () => {
    dispatch(closeIngredientDetails())
   };
-
-  setInterval(() => {
-   dispatch(updateAccessToken()) 
-  }, 19 * 60 * 1000);
-  setInterval(() => {
-   dispatch(updateAccessToken()) 
-  }, 19.7 * 60 * 1000);
 
 //получение списка ингридиентов с API + установка начальной булочки (считаю это лучше чем просто заглушки)
 // useEffect(() => {
@@ -74,15 +69,38 @@ useEffect(() => {
       <Router>
       <AppHeader />
         <Routes>
-          <Route path="/" element={ 
+          <Route path="/ingredients" element={ 
             <main className={`${style.container} ${style.main_content}`}>
             <BurgerIngredients/><BurgerConstructor/></main>}>
           </Route>
-          <Route path="/register" element={<Register/>}/>
-          <Route path="/login" element={<Login />}/>
-          <Route path="/forgot-password" element={<ForgotPassword />}/>
-          <Route path="/reset-password" element={<ResetPassword />}/>
-          <Route path="/profile" element={<Profile />}/>
+
+           <Route path="/login" element={
+                <UnprotectedRouteElement>
+                    <Login />
+                </UnprotectedRouteElement>
+            } />
+            <Route path="/register" element={
+                <UnprotectedRouteElement>
+                    <Register />
+                </UnprotectedRouteElement>
+            } />
+            <Route path="/forgot-password" element={
+                <UnprotectedRouteElement>
+                    <ForgotPassword />
+                </UnprotectedRouteElement>
+            } />
+            <Route path="/reset-password" element={
+                <ProtectedResetPasswordRoute>
+                  <ResetPassword />
+                </ProtectedResetPasswordRoute>
+                 
+            } />
+
+          <Route path="/profile" element={
+                <ProtectedRouteElement>
+                    <Profile />
+                </ProtectedRouteElement>
+            } />
           <Route path="*" element={<NotFoundPage />}/>
         </Routes>
       </Router>

@@ -45,7 +45,7 @@ const Card = ({
       },
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),
-      }),
+      }), 
     }),
     []
   );

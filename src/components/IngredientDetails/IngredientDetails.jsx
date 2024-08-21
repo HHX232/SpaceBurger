@@ -11,7 +11,7 @@ function getImageNameFromURL(url) {
   const imageName = filename.split('.')[0]; 
   return imageName;
 }
-  
+   
 function IngredientDetails({ ingredientDetailsObject }) {
   const {
     image = testImage,

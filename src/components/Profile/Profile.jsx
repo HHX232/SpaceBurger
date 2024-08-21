@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import style from './Profile.module.css'
 import { Link } from "react-router-dom";
 import { PasswordInput, EmailInput, Input, EditIcon, Button } from '@ya.praktikum/react-developer-burger-ui-components'
-import { getCookie, updateAccessToken } from "../../services/actions/register-action";
+import { getCookie, checkAndUpdateAccessToken } from "../../services/actions/register-action";
 import { request } from "../../utils/responses";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -12,25 +12,25 @@ const Profile = () => {
    const [startInputsValue, setStartInputsValue] = useState({name: "yourName", email: "yourEmail@gmail.com2", password: "Are you want create new password?"})
    const [boolUserAccess, setBoolUserAccess] = useState(false);
    const [boolNewData, setBoolNewData] = useState(false);
-   const [boolSubmitNewData, setSubmitBoolNewData] = useState(false);
 
    const dispatch = useDispatch()
    const refreshToken = getCookie('refreshToken');
    const accessTokenFromCookie = getCookie('accessToken')
-   // console.log("accessTokenFromStore: ", accessTokenFromStore)
-   // console.log("accessToken: ", accessTokenFromCookie)
-   const accessToken = accessTokenFromCookie.replace('Bearer%20', '');
+ 
+
+   const accessToken = accessTokenFromCookie ? accessTokenFromCookie.replace('Bearer%20', '') : "";
    const getUserInfoFromApi = async () =>{
       console.log("refreshToken",refreshToken)
-      if(!boolUserAccess){
+      if(!boolUserAccess){ 
          try{ 
-            await updateAccessToken(refreshToken)
-            setBoolUserAccess(true)}catch(error){
+            await checkAndUpdateAccessToken()
+            setBoolUserAccess(true)
+         }catch(error){
                console.error("some message", error)
             }
         
       }
-      if(boolUserAccess){}
+try{
      const data =  await request("auth/user", {
          method: 'GET',
          headers: {
@@ -40,6 +40,11 @@ const Profile = () => {
        console.log(data)
        const {success, user} = data
        setUserData({...profileUserData, name: user.name, email: user.email})
+      }catch(error){
+         // await  dispatch(checkAndUpdateAccessToken())
+         alert("Попробуйте войти в аккаунт заново")
+         console.error("ошибка access токена", error)
+      }
    }
    
 
@@ -107,7 +112,7 @@ const Profile = () => {
          </ul>
          <ul className={`${style.inputs_list}`}>
             <li className={`${style.inputs_list_item}`}>
-            <PasswordInput
+            <Input
         onChange={onChange}
         value={profileUserData.name}
         name={'name'}
@@ -124,7 +129,9 @@ const Profile = () => {
         name={'email'}
         placeholder="Логин"
       //   isIcon={true}
-        extraClass="mb-6"
+        extraClass="mb-6 "
+      //   disabled={false}
+            icon="EditIcon"
       />
             </li>
             <li className={`${style.inputs_list_item}`}>

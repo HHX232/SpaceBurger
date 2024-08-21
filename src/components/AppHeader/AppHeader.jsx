@@ -1,12 +1,13 @@
-import React, {useState, useCallback, useEffect} from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { BurgerIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import { ListIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import { Logo } from "@ya.praktikum/react-developer-burger-ui-components";
 import { ProfileIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import style from './AppHeader.module.css'
 import stylesHeader from "./AppHeader.module.css";
-import { Link} from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { getCookie } from "../../services/actions/register-action";
 
 function NavItem(props) {
   return (
@@ -18,24 +19,18 @@ function NavItem(props) {
     </li>
   );
 }
+ 
 const ProfileButton = () => {
   const [isActive, setIsActive] = useState(false);
-  const [userIsLogin, setUserIsLogin] = useState(false);
-  const userRegister = useSelector((state) => state.register);
-
+  const location = useLocation();
+  const haveRefreshToken = getCookie('refreshToken');
   const handleDoubleClick = useCallback(() => {
     setIsActive((prevIsActive) => !prevIsActive);
   }, []);
 
-  useEffect(() => {
-    if (userRegister.user.name && userRegister.accessToken) {
-      setUserIsLogin(true); 
-    } else {
-      setUserIsLogin(false); 
-    }
-  }, [userRegister]);
 
-  const buttonText = userIsLogin ? "Личный кабинет" : "Войти"; 
+  const buttonText = haveRefreshToken ? "Личный кабинет" : "Войти"; 
+  const textType = location.pathname.includes("/profile")? "text text_type_main-default text__active" : "text text_type_main-default text__disactive";
 
   return (
     <Link
@@ -43,8 +38,8 @@ const ProfileButton = () => {
       to="/profile"
       onDoubleClick={handleDoubleClick}
     >
-      <ProfileIcon type="secondary" />
-      <p className="text text_type_main-default text__disactive">
+      <ProfileIcon type={location.pathname.includes("/profile") ? "primary" : "secondary"} />
+      <p className={textType}>
         {buttonText}
       </p>
     </Link>
@@ -52,6 +47,8 @@ const ProfileButton = () => {
 };
 
 function AppHeader() {
+  const location = useLocation();
+
   return (
     <header>
     <nav className={`${stylesHeader.header} `}>
@@ -60,10 +57,10 @@ function AppHeader() {
           <ul className={stylesHeader.nav__list}>
 
             <NavItem
-              textType="text text_type_main-default text__active"
-              icon={<BurgerIcon />}
+              textType={location.pathname === "/ingredients" ? "text text_type_main-default text__active" : "text text_type_main-default text__disactive"}
+              icon={<BurgerIcon type={location.pathname === "/ingredients" ?  "primary" : "secondary"} />}
               text="Конструктор"
-              to="/"
+              to="/ingredients"
             />
             
   
@@ -75,7 +72,7 @@ function AppHeader() {
             />
           </ul>
           <div className={stylesHeader.header__logo}>
-            <Link to="/">
+            <Link to="/ingredients">
             <Logo /></Link>
           </div>
           
