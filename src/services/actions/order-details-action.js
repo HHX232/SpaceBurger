@@ -5,7 +5,7 @@ export const ORDER_REQUEST = "ORDER_REQUEST";
 export const ORDER_SUCCESS = "ORDER_SUCCESS";
 export const ORDER_FAILURE = "ORDER_FAILURE";
 
-export const openOrderDetails = (number) => ({
+export const openOrderDetails = (number) => ({ 
   type: ORDER_DETAILS_OPEN,
   number: number
 });

@@ -11,7 +11,7 @@ import { takeIngredients } from '../../services/actions/ingredient-action';
 import { addIngredient } from '../../services/actions/constructor-action';
 import { closeIngredientDetails } from '../../services/actions/ingredient-details-open-action';
 import { closeOrderDetails} from '../../services/actions/order-details-action'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useSearchParams } from 'react-router-dom';
 import Register from "../Register/Register";
 import Login from "../Login/Login";
 import ForgotPassword from "../Forgot-password/ForgotPassword";
@@ -21,6 +21,7 @@ import NotFoundPage from "../NotFound/NotFound";
 import ProtectedRouteElement from "../ProtectedRouteElement/ProtectedRouteElement";
 import UnprotectedRouteElement from "../UnprotectedRouteElement/UnprotectedRouteElement";
 import ProtectedResetPasswordRoute from "../ProtectedResetPasswordRoute/ProtectedResetPasswordRoute";
+import IngredientPage from "../IngredientPage/IngredientPage";
 
 function App() {
  
@@ -30,10 +31,8 @@ function App() {
   const isOrdertitle = useSelector(store=> store.orderDetails.number)
   const { global_ingredients } = useSelector(state => state.ingredients);
   const dispatch = useDispatch();
+  const [searchParams, setSearchParams] = useSearchParams()
 
-  // const onAdd = (item) => {
-  //   dispatch(addIngredient(item));
-  // };
 
   const closeIngredientDetailsFunction = () => {
    dispatch(closeIngredientDetails())
@@ -65,14 +64,16 @@ useEffect(() => {
   return (
     <> 
       
-
-      <Router>
       <AppHeader />
         <Routes>
+          <Route path="/" element={ <Navigate to="/ingredients"/>} ></Route>
+
           <Route path="/ingredients" element={ 
             <main className={`${style.container} ${style.main_content}`}>
             <BurgerIngredients/><BurgerConstructor/></main>}>
           </Route>
+          <Route path="/ingredients/:id" element={<IngredientPage  />}></Route>
+ 
 
            <Route path="/login" element={
                 <UnprotectedRouteElement>
@@ -83,6 +84,7 @@ useEffect(() => {
                 <UnprotectedRouteElement>
                     <Register />
                 </UnprotectedRouteElement>
+              
             } />
             <Route path="/forgot-password" element={
                 <UnprotectedRouteElement>
@@ -103,11 +105,11 @@ useEffect(() => {
             } />
           <Route path="*" element={<NotFoundPage />}/>
         </Routes>
-      </Router>
+    
 
      
-      {isOpenOrderDetails && <Modal onClose={handleCloseOrderDetails}> <OrderDetails title={String(isOrdertitle) } /></Modal>}
-      {ingredientObject.isOpen && <Modal title="Детали ингредиента" onClose={closeIngredientDetailsFunction}> <IngredientDetails ingredientDetailsObject={ingredientObject} /></Modal>}
+      {isOpenOrderDetails && <Modal objectParams={searchParams} setSearchParams={setSearchParams} onClose={handleCloseOrderDetails}> <OrderDetails title={String(isOrdertitle) } /></Modal>}
+      {ingredientObject.isOpen && <Modal objectParams={searchParams} setSearchParams={setSearchParams} title="Детали ингредиента" onClose={closeIngredientDetailsFunction}> <IngredientDetails ingredientDetailsObject={ingredientObject} /></Modal>}
     </>
   );
 }

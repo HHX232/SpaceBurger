@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import PropTypes from "prop-types";
+import PropTypes, { func } from "prop-types";
 import {
   Tab,
   Counter,
@@ -15,6 +15,7 @@ import { openIngredientDetails } from "../../services/actions/ingredient-details
 import { v4 as uuidv4 } from "uuid";
 import { useDrag } from "react-dnd";
 import useOnScreen from "../../hooks/onScreen.hook";
+import { Outlet, useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 const Card = ({
   id,
@@ -27,11 +28,13 @@ const Card = ({
   carbohydrates,
   calories,
   food_title,
+  cardIndex
 }) => {
   const [count, setCount] = useState(0);
   const [inBasket, setInBasket] = useState(false);
   const dispatch = useDispatch();
   const { ingredients, bun } = useSelector((state) => state.constructorList);
+  const navigate = useNavigate()
   const [{ isDragging }, dragRef] = useDrag(
     () => ({
       type: "ingridient",
@@ -49,13 +52,15 @@ const Card = ({
     }),
     []
   );
-
+  const [searchParams, setSearchParams] = useSearchParams()
+  
   const setIngredientDetailsOpen = (item) => {
+    // 
     dispatch(openIngredientDetails(item));
   };
 
   const onAdd = (item) => {
-    console.log(item);
+    // console.log(item);
     dispatch(addIngredient(item));
   };
 
@@ -63,15 +68,14 @@ const Card = ({
     dispatch(removeIngredient(generatedId));
   };
 
-  const onOneClick = () => {
+  function onOneClick ()  {
+    //!Задаем параметр активной модалки который сука не работает
+    const valueModalIsOpen = searchParams.get("modalIsOpen");
+    navigate(`/ingredients/${cardIndex}`);
+    // setSearchParams({modalIsOpen:true})
     setIngredientDetailsOpen({
       isOpen: true,
-      proteins,
-      fat,
-      carbohydrates,
-      calories,
-      image,
-      food_title,
+      cardIndex
     });
   };
 
@@ -109,6 +113,9 @@ const Card = ({
     }
   }, [ingredients, name, bun.text, type]);
 
+  // useEffect(()=>{
+  //   setSearchParams({modalIsOpen:false});
+  // }, [])
   return (
     <div
       ref={dragRef}
@@ -121,10 +128,10 @@ const Card = ({
       onClick={onOneClick}
     >
       {count > 0 && <Counter count={count} size="default" />}
-      <img src={image} alt={name} className={style.image} />
+      <img  src={image} alt={name} className={style.image} />
       <div className={style.info}>
         <div className={`${style.price} text text_type_main-medium`}>
-          <span className="mr-2">{price}</span>
+          <span className="mr-2">{price} index: {cardIndex}</span>
           <CurrencyIcon type="primary" />
         </div>
         <span className={`${style.name} text text_type_main-small`}>
@@ -180,6 +187,8 @@ CardTitle.propTypes = {
   ]),
 };
 
+
+
 const CardSets = ({ bunsRef, saucesRef, mainsRef, setCurrentTab }) => {
   const { global_ingredients } = useSelector((state) => state.ingredients);
   const { ingredients } = useSelector((state) => state.constructorList);
@@ -188,7 +197,7 @@ const CardSets = ({ bunsRef, saucesRef, mainsRef, setCurrentTab }) => {
   const mains = global_ingredients.filter((item) => item.type === "main");
   const [bunsVisible, setBunsVisible] = useState(true);
 
-  // У компонентов CardTitle слушаю колбэки onHide и onShow и меняю текущий Tab
+  //! У компонентов CardTitle слушаю колбэки onHide и onShow и меняю текущий Tab
   return (
     <div>
       <CardTitle
@@ -198,7 +207,7 @@ const CardSets = ({ bunsRef, saucesRef, mainsRef, setCurrentTab }) => {
         refProp={bunsRef}
       />
       <div className={`${style.cards} mb-10 ml-4`}>
-        {buns.map((bun) => (
+        {buns.map((bun, index) => (
           <Card
             id={bun._id}
             key={bun._id}
@@ -212,12 +221,13 @@ const CardSets = ({ bunsRef, saucesRef, mainsRef, setCurrentTab }) => {
             calories={bun.calories}
             type={bun.type}
             ingredients={ingredients}
+            cardIndex={index}
           />
         ))}
       </div>
       <CardTitle onShow={() => !bunsVisible && setCurrentTab("two")} onHide={() => setCurrentTab("three")} refProp={saucesRef} title="Соусы" />
       <div className={`${style.cards} mb-10 ml-4`}>
-        {sauces.map((sauce) => (
+        {sauces.map((sauce, index) => (
           <Card
             id={sauce._id}
             key={sauce._id}
@@ -231,12 +241,13 @@ const CardSets = ({ bunsRef, saucesRef, mainsRef, setCurrentTab }) => {
             calories={sauce.calories}
             type={sauce.type}
             ingredients={ingredients}
+            cardIndex={buns.length + index}
           />
         ))}
       </div>
       <CardTitle onShow={() => setBunsVisible(false)} refProp={mainsRef} title="Начинки" />
       <div className={`${style.cards} mb-10 ml-4`}>
-        {mains.map((main) => (
+        {mains.map((main, index) => (
           <Card
             id={main._id}
             key={main._id}
@@ -250,6 +261,7 @@ const CardSets = ({ bunsRef, saucesRef, mainsRef, setCurrentTab }) => {
             calories={main.calories}
             type={main.type}
             ingredients={ingredients}
+            cardIndex={buns.length + sauces.length + index}
           />
         ))}
       </div>
@@ -340,7 +352,7 @@ function BurgerIngredients() {
   const saucesRef = useRef(null);
   const mainsRef = useRef(null);
   const contentRef = useRef(null);
-
+  
   const handleScroll = () => {
     const contentTop = contentRef.current.getBoundingClientRect().top;
     const bunsTop = bunsRef.current.getBoundingClientRect().top;
@@ -359,7 +371,7 @@ function BurgerIngredients() {
       setCurrent("three");
     }
   };
-
+  
   useEffect(() => {
     const contentNode = contentRef.current;
     contentNode.addEventListener("scroll", handleScroll);
@@ -367,6 +379,7 @@ function BurgerIngredients() {
       contentNode.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
 
   return (
     <>
@@ -393,7 +406,9 @@ function BurgerIngredients() {
               setCurrentTab={setCurrent}
             />
           </ul>
+          {/* <Outlet/> */}
         </div>
+    
       </div>
     </>
   );

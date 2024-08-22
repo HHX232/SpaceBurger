@@ -1,6 +1,6 @@
 import {INGREDIENT_DETAILS_IS_OPEN, INGREDIENT_DETAILS_IS_CLOSE} from '../actions/ingredient-details-open-action'
 const initialState = {
-   ingredientObject:{isOpen: false, proteins: 0, fat: 0, carbohydrates: 0, calories: 110, image: "", food_title: ""}
+   ingredientObject:{isOpen: false, proteins: 0, fat: 0, carbohydrates: 0, calories: 110, image: "", food_title: "", cardIndex: 0}
 }
 
 const ingredientDetailsReducer = (state=initialState, action)=>{
@@ -15,4 +15,4 @@ const ingredientDetailsReducer = (state=initialState, action)=>{
    }
 }
 
-export default ingredientDetailsReducer 
+export default ingredientDetailsReducer

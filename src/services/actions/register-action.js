@@ -91,7 +91,8 @@ export const clearTokens = () => {
 
   console.log('Токены были очищены.');
 };
-clearTokens()
+
+
 //выходим из системы
 export const logout = () =>{
   console.log("start logout")
