@@ -71,8 +71,9 @@ useEffect(() => {
           <Route path="/ingredients" element={ 
             <main className={`${style.container} ${style.main_content}`}>
             <BurgerIngredients/><BurgerConstructor/></main>}>
+            <Route path=":id" element={<IngredientPage  />}></Route>
           </Route>
-          <Route path="/ingredients/:id" element={<IngredientPage  />}></Route>
+         
  
 
            <Route path="/login" element={

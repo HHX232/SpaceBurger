@@ -10,9 +10,15 @@ function ModalOverlay({ children, onClose, setSearchParams }) {
 const navigate = useNavigate()
   const onClickOverlay = (e) => {
     if (e.target === e.currentTarget) {
-      onClose();
-      setSearchParams({ modalIsOpen: false });
+      // setSearchParams({ modalIsOpen: false });
       // navigate("/ingredients")
+      const newSearchParams = new URLSearchParams();
+      newSearchParams.set('modalIsOpen', 'false');
+      onClose();
+      navigate({
+        pathname: "/ingredients",
+        search: `?${newSearchParams.toString()}`,
+      });
     }
   };
 
@@ -34,9 +40,13 @@ function Modal({ title = "", children, onClose, setSearchParams }) {
   useEffect(() => {
     const handleEsc = (event) => {
       if (event.key === "Escape") {
+        const newSearchParams = new URLSearchParams();
+        newSearchParams.set('modalIsOpen', 'false');
         onClose();
-        setSearchParams({ modalIsOpen: false });
-        // navigate("/ingredients")
+        navigate({
+          pathname: "/ingredients",
+          search: `?${newSearchParams.toString()}`,
+        });
       }
     };
     window.addEventListener('keydown', handleEsc);
@@ -44,10 +54,15 @@ function Modal({ title = "", children, onClose, setSearchParams }) {
       window.removeEventListener('keydown', handleEsc);
     };
   }, [onClose, setSearchParams]);
-function onClickButton(){
-  onClose()
-  setSearchParams({ modalIsOpen: false });
-}
+  function onClickButton() {
+    const newSearchParams = new URLSearchParams();
+    newSearchParams.set('modalIsOpen', 'false');
+    onClose();
+    navigate({
+      pathname: "/ingredients",
+      search: `?${newSearchParams.toString()}`,
+    });
+  }
   return ReactDOM.createPortal(
     <div className={style.modal}>
       <ModalOverlay onClose={onClose} setSearchParams={setSearchParams}> 

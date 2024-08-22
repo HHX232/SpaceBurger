@@ -16,6 +16,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useDrag } from "react-dnd";
 import useOnScreen from "../../hooks/onScreen.hook";
 import { Outlet, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import IngredientPage from "../IngredientPage/IngredientPage";
 
 const Card = ({
   id,
@@ -69,12 +70,20 @@ const Card = ({
   };
 
   function onOneClick ()  {
-    //!Задаем параметр активной модалки который сука не работает
+    //!Задаем параметр активной модалки
     const valueModalIsOpen = searchParams.get("modalIsOpen");
-    navigate(`/ingredients/${cardIndex}`);
-    // setSearchParams({modalIsOpen:true})
+
+    // Создаем новый URLSearchParams объект, включающий параметр modalIsOpen
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set("modalIsOpen", "true");
+  
+    // Используем navigate для изменения как пути, так и параметров запроса
+    navigate({
+      pathname: `/ingredients/${cardIndex}`,
+      search: `?${newSearchParams.toString()}`
+    });
     setIngredientDetailsOpen({
-      isOpen: true,
+      isOpen: valueModalIsOpen,
       cardIndex
     });
   };
@@ -113,6 +122,7 @@ const Card = ({
     }
   }, [ingredients, name, bun.text, type]);
 
+  
   // useEffect(()=>{
   //   setSearchParams({modalIsOpen:false});
   // }, [])
@@ -352,7 +362,10 @@ function BurgerIngredients() {
   const saucesRef = useRef(null);
   const mainsRef = useRef(null);
   const contentRef = useRef(null);
-  
+  const [searchParams] = useSearchParams();
+  const modalIsOpen = searchParams.get("modalIsOpen");
+
+ 
   const handleScroll = () => {
     const contentTop = contentRef.current.getBoundingClientRect().top;
     const bunsTop = bunsRef.current.getBoundingClientRect().top;
@@ -380,6 +393,9 @@ function BurgerIngredients() {
     };
   }, []);
 
+  // if (modalIsOpen === "false") {
+  //   return <IngredientPage />;
+  // }
 
   return (
     <>
@@ -406,7 +422,7 @@ function BurgerIngredients() {
               setCurrentTab={setCurrent}
             />
           </ul>
-          {/* <Outlet/> */}
+          <Outlet/>
         </div>
     
       </div>
