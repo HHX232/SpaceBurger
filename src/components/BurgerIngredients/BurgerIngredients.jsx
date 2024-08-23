@@ -15,8 +15,14 @@ import { openIngredientDetails } from "../../services/actions/ingredient-details
 import { v4 as uuidv4 } from "uuid";
 import { useDrag } from "react-dnd";
 import useOnScreen from "../../hooks/onScreen.hook";
-import { Outlet, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {
+  Outlet,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import IngredientPage from "../IngredientPage/IngredientPage";
+import Modal from "../Modal/Modal";
 
 const Card = ({
   id,
@@ -29,13 +35,13 @@ const Card = ({
   carbohydrates,
   calories,
   food_title,
-  cardIndex
+  cardIndex,
 }) => {
   const [count, setCount] = useState(0);
   const [inBasket, setInBasket] = useState(false);
   const dispatch = useDispatch();
   const { ingredients, bun } = useSelector((state) => state.constructorList);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [{ isDragging }, dragRef] = useDrag(
     () => ({
       type: "ingridient",
@@ -49,14 +55,14 @@ const Card = ({
       },
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),
-      }), 
+      }),
     }),
     []
   );
-  const [searchParams, setSearchParams] = useSearchParams()
-  
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const setIngredientDetailsOpen = (item) => {
-    // 
+    //
     dispatch(openIngredientDetails(item));
   };
 
@@ -69,24 +75,23 @@ const Card = ({
     dispatch(removeIngredient(generatedId));
   };
 
-  function onOneClick ()  {
+  function onOneClick() {
+    console.log("click");
     //!Задаем параметр активной модалки
     const valueModalIsOpen = searchParams.get("modalIsOpen");
 
-    // Создаем новый URLSearchParams объект, включающий параметр modalIsOpen
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set("modalIsOpen", "true");
-  
-    // Используем navigate для изменения как пути, так и параметров запроса
+
     navigate({
-      pathname: `/ingredients/${cardIndex}`,
-      search: `?${newSearchParams.toString()}`
+      pathname: `/ingredients/${id}`,
+      search: `?${newSearchParams.toString()}`,
     });
     setIngredientDetailsOpen({
       isOpen: valueModalIsOpen,
-      cardIndex
+      cardIndex,
     });
-  };
+  }
 
   const handleClick = (e) => {
     e.preventDefault();
@@ -122,7 +127,6 @@ const Card = ({
     }
   }, [ingredients, name, bun.text, type]);
 
-  
   // useEffect(()=>{
   //   setSearchParams({modalIsOpen:false});
   // }, [])
@@ -138,10 +142,12 @@ const Card = ({
       onClick={onOneClick}
     >
       {count > 0 && <Counter count={count} size="default" />}
-      <img  src={image} alt={name} className={style.image} />
+      <img src={image} alt={name} className={style.image} />
       <div className={style.info}>
         <div className={`${style.price} text text_type_main-medium`}>
-          <span className="mr-2">{price} index: {cardIndex}</span>
+          <span className="mr-2">
+            {price}
+          </span>
           <CurrencyIcon type="primary" />
         </div>
         <span className={`${style.name} text text_type_main-small`}>
@@ -151,11 +157,6 @@ const Card = ({
     </div>
   );
 };
-
-
-
-
-
 
 Card.propTypes = {
   id: PropTypes.string.isRequired,
@@ -171,7 +172,6 @@ Card.propTypes = {
 };
 
 const CardTitle = ({ title, refProp, onShow, onHide }) => {
-
   const ref = useRef();
   const isVisible = useOnScreen(refProp);
 
@@ -196,8 +196,6 @@ CardTitle.propTypes = {
     PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
   ]),
 };
-
-
 
 const CardSets = ({ bunsRef, saucesRef, mainsRef, setCurrentTab }) => {
   const { global_ingredients } = useSelector((state) => state.ingredients);
@@ -235,7 +233,12 @@ const CardSets = ({ bunsRef, saucesRef, mainsRef, setCurrentTab }) => {
           />
         ))}
       </div>
-      <CardTitle onShow={() => !bunsVisible && setCurrentTab("two")} onHide={() => setCurrentTab("three")} refProp={saucesRef} title="Соусы" />
+      <CardTitle
+        onShow={() => !bunsVisible && setCurrentTab("two")}
+        onHide={() => setCurrentTab("three")}
+        refProp={saucesRef}
+        title="Соусы"
+      />
       <div className={`${style.cards} mb-10 ml-4`}>
         {sauces.map((sauce, index) => (
           <Card
@@ -255,7 +258,11 @@ const CardSets = ({ bunsRef, saucesRef, mainsRef, setCurrentTab }) => {
           />
         ))}
       </div>
-      <CardTitle onShow={() => setBunsVisible(false)} refProp={mainsRef} title="Начинки" />
+      <CardTitle
+        onShow={() => setBunsVisible(false)}
+        refProp={mainsRef}
+        title="Начинки"
+      />
       <div className={`${style.cards} mb-10 ml-4`}>
         {mains.map((main, index) => (
           <Card
@@ -365,7 +372,6 @@ function BurgerIngredients() {
   const [searchParams] = useSearchParams();
   const modalIsOpen = searchParams.get("modalIsOpen");
 
- 
   const handleScroll = () => {
     const contentTop = contentRef.current.getBoundingClientRect().top;
     const bunsTop = bunsRef.current.getBoundingClientRect().top;
@@ -384,7 +390,7 @@ function BurgerIngredients() {
       setCurrent("three");
     }
   };
-  
+
   useEffect(() => {
     const contentNode = contentRef.current;
     contentNode.addEventListener("scroll", handleScroll);
@@ -393,9 +399,13 @@ function BurgerIngredients() {
     };
   }, []);
 
-  // if (modalIsOpen === "false") {
-  //   return <IngredientPage />;
-  // }
+
+  const navigate = useNavigate();
+  const closeIngredientDetails = () => {
+    navigate({
+      pathname: `/ingredients/`,
+    });
+  };
 
   return (
     <>
@@ -422,10 +432,15 @@ function BurgerIngredients() {
               setCurrentTab={setCurrent}
             />
           </ul>
-          <Outlet/>
         </div>
-    
       </div>
+      {/* Снизу вроде понятно */}
+      {modalIsOpen === "true" && (
+        <Modal
+          onClose={() => closeIngredientDetails()}
+          children={<IngredientPage />}
+        ></Modal>
+      )}
     </>
   );
 }

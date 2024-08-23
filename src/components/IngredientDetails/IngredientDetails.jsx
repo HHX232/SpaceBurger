@@ -16,14 +16,13 @@ function getImageNameFromURL(url) {
   
 function IngredientDetails({ ingredientDetailsObject }) {
   const {
-    //оставил лишние поля просто для использования как заглушка
     image = testImage,
     food_title = "Что-то внеземное и внекосмическое",
     calories = "any amount",
     proteins = "any amount",
     fats = "any amount",
     carbohydrates = "any amount",
-    //это поле единственное которое реально нужно
+
     cardIndex
   } = ingredientDetailsObject;
 // const [a,b] = useSearchParams()

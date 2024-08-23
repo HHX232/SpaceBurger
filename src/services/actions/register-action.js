@@ -86,23 +86,21 @@ export const setCookie = (name, value, options = {}) => {
 
 export const clearTokens = () => {
   setCookie('refreshToken', '', { expires: new Date(0) });
-
   setCookie('accessToken', '', { expires: new Date(0) });
-
   console.log('Токены были очищены.');
 };
 
 
 //выходим из системы
-export const logout = () =>{
+export const logout =  () =>{
   console.log("start logout")
   const refreshToken = getCookie("refreshToken")
-  if (!refreshToken) {
+  if (!refreshToken) { 
     console.error('No refreshToken found');
     return;
   }
   try{
-   const {success} = request("auth/logout",{
+   const {success} =  request("auth/logout",{
       method: "POST",
       headers:  {'Content-Type': 'application/json'},
       body: JSON.stringify({token: refreshToken}) 
@@ -127,8 +125,6 @@ export const logout = () =>{
   }catch(error){
     console.error("error in logout: ", error)
   }
-
-
 }
 
 
@@ -187,29 +183,13 @@ const decodeToken = (token) => {
   }
 };
 
-export const checkAndUpdateAccessToken = async () => {
-  const accessToken = getCookie('accessToken');
 
-  if (!accessToken) {
-    console.log('AccessToken отсутствует, требуется обновление');
-    return updateToken();
-  }
-
-  // Проверяем срок жизни accessToken
-  const tokenExpirationTime = decodeToken(accessToken);
-
-  if (tokenExpirationTime && Date.now() >= tokenExpirationTime) {
-    console.log('Срок действия AccessToken истек, требуется обновление');
-    return updateToken();
-  }
-
-  console.log('AccessToken присутствует и еще не истек.');
-};
 
 export const updateToken = async () => {
 
   const refreshToken = getCookie('refreshToken');
   if (!refreshToken) {
+    console.log('Пройдите регистрацию')
     alert('Пройдите регистрацию');
     return;
   }
@@ -221,6 +201,7 @@ export const updateToken = async () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token: refreshToken }),
     });
+console.log("response.success", response.success)
 
     if (response.success) {
       const { accessToken: newAccessTokenValue, refreshToken: newRefreshToken } = response;
@@ -238,6 +219,26 @@ export const updateToken = async () => {
   }
 };
 
+export const checkAndUpdateAccessToken = async () => {
+  const accessToken = getCookie('accessToken');
+
+  if (!accessToken) {
+    console.log('AccessToken отсутствует, требуется обновление');
+    updateToken()
+    return ;
+  }
+
+  // Проверяем срок жизни accessToken
+  const tokenExpirationTime = decodeToken(accessToken);
+
+  if (tokenExpirationTime && Date.now() >= tokenExpirationTime) {
+    console.log('Срок действия AccessToken истек, требуется обновление');
+    updateToken()
+    return ;
+  }
+
+  console.log('AccessToken присутствует и еще не истек.');
+};
 
 setInterval(() => {
   checkAndUpdateAccessToken();

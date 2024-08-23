@@ -57,10 +57,10 @@ function AppHeader() {
           <ul className={stylesHeader.nav__list}>
 
             <NavItem
-              textType={location.pathname === "/ingredients" ? "text text_type_main-default text__active" : "text text_type_main-default text__disactive"}
-              icon={<BurgerIcon type={location.pathname === "/ingredients" ?  "primary" : "secondary"} />}
+              textType={location.pathname === "/" ? "text text_type_main-default text__active" : "text text_type_main-default text__disactive"}
+              icon={<BurgerIcon type={location.pathname === "/" ?  "primary" : "secondary"} />}
               text="Конструктор"
-              to="/ingredients"
+              to="/"
             />
             
   
@@ -72,7 +72,7 @@ function AppHeader() {
             />
           </ul>
           <div className={stylesHeader.header__logo}>
-            <Link to="/ingredients">
+            <Link to="/">
             <Logo /></Link>
           </div>
           

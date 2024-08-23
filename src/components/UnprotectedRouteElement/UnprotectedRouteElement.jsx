@@ -31,7 +31,7 @@ const UnprotectedRouteElement = ({ children }) => {
     }, [refreshToken, accessToken]);
 
     if (isChecking) {
-        return <img src={preloader} alt="Loading..." />; 
+        return <img src={preloader}  style={{ width: "100px", height: "100px" }} alt="Loading..." />; 
     }
 
     

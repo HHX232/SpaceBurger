@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import style from './Profile.module.css'
 import { Link } from "react-router-dom";
 import { PasswordInput, EmailInput, Input, EditIcon, Button } from '@ya.praktikum/react-developer-burger-ui-components'
-import { getCookie, checkAndUpdateAccessToken } from "../../services/actions/register-action";
+import { getCookie, checkAndUpdateAccessToken, logout } from "../../services/actions/register-action";
 import { request } from "../../utils/responses";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -102,7 +102,10 @@ try{
                <Link className="text text_type_main-medium text_color_inactive" to="profile">История заказов</Link>
             </li>
             <li className={`${style.profile_links_item}`}>
-               <Link className="text text_type_main-medium text_color_inactive" to="profile">Выход</Link>
+               <Link onClick={e =>{
+               
+                  // logout()
+               }} className="text text_type_main-medium text_color_inactive" to="/">Выход</Link>
             </li>
             <li className={`${style.profile_links_text} text-secondary`}>
              <p className="text text_type_main-small">В этом разделе вы можете <br />
