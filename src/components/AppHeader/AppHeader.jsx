@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import  { useState, useCallback } from "react";
 import { BurgerIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import { ListIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import { Logo } from "@ya.praktikum/react-developer-burger-ui-components";
@@ -6,7 +6,6 @@ import { ProfileIcon } from "@ya.praktikum/react-developer-burger-ui-components"
 import style from './AppHeader.module.css'
 import stylesHeader from "./AppHeader.module.css";
 import { Link, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
 import { getCookie } from "../../services/actions/register-action";
 
 function NavItem(props) {

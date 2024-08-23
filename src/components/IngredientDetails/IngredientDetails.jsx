@@ -1,11 +1,8 @@
-import React from "react";
 import PropTypes from "prop-types";
-import Modal from '../Modal/Modal';
 import style from './IngredientDetails.module.css';
 import { CloseIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 import testImage from '../../images/meat-01.png';
 import { useSelector } from "react-redux";
-import { useSearchParams } from "react-router-dom";
 
 function getImageNameFromURL(url) {
   const parts = url.split('/');
@@ -25,9 +22,9 @@ function IngredientDetails({ ingredientDetailsObject }) {
 
     cardIndex
   } = ingredientDetailsObject;
-// const [a,b] = useSearchParams()
-const { global_ingredients } = useSelector((state) => state.ingredients);
-if (global_ingredients.length === 0) {
+
+const globalIngredients  = useSelector((state) => state.ingredients.globalIngredients);
+if (globalIngredients.length === 0) {
   return ; 
 }
 
@@ -38,12 +35,10 @@ const typeOrder = {
 };
 
 // Сортируем массив по типам
-const sortedIngredients = [...global_ingredients].sort((a, b) => {
+const sortedIngredients = [...globalIngredients].sort((a, b) => {
   return typeOrder[a.type] - typeOrder[b.type];
 });
-// console.log("sortedIngredients details", sortedIngredients)
 const currentIngredient = sortedIngredients[cardIndex]
-// console.log(currentIngredient) 
 const imageName = getImageNameFromURL(currentIngredient.image_large);
 
   return (

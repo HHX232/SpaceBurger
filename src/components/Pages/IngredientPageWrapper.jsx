@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 
 import { useNavigate } from 'react-router-dom';
 import IngredientPage from './IngredientPage/IngredientPage';
-import Modal from './Modal/Modal';
+import Modal from '../Modal/Modal';
 
 function IngredientPageWrapper() {
   const [searchParams, setSearchParams] = useSearchParams();

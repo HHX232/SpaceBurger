@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import style from './ResetPassword.module.css'
-import { PasswordInput, EmailInput, Input, EditIcon, Button } from '@ya.praktikum/react-developer-burger-ui-components'
+import { PasswordInput,  Input, Button } from '@ya.praktikum/react-developer-burger-ui-components'
 import { Link } from "react-router-dom";
-import { request } from "../../utils/responses";
+import { request } from "../../../utils/responses";
 
 const ResetPassword = () => {
   const [password, setPassword] = useState('');

@@ -1,19 +1,15 @@
-import React, { useEffect, useState } from "react";
 import style from "./IngredientPage.module.css";
-import { useLocation, useParams, useSearchParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import preloader from "../../images/preloader.svg";
-import NotFoundPage from "../NotFound/NotFound";
-import { openIngredientDetails } from "../../services/actions/ingredient-details-open-action";
+import {  useParams, useSearchParams } from "react-router-dom";
+import {  useSelector } from "react-redux";
+import preloader from "../../../images/preloader.svg";
 
 const IngredientPage = () => {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
-  const [isModalOpen, setIsModalOpen] = useState(false); 
-  const location = useLocation();
-  const { global_ingredients } = useSelector((state) => state.ingredients);
+
+  const  globalIngredients  = useSelector((state) => state.ingredients.globalIngredients);
   const isModalClosed = searchParams.get("modalIsOpen") === "false";
-  const ingredient = global_ingredients.find(
+  const ingredient = globalIngredients.find(
     (ingr) => ingr._id === id
   );
 

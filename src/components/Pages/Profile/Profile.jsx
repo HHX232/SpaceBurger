@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from "react";
 import style from './Profile.module.css'
 import { Link } from "react-router-dom";
-import { PasswordInput, EmailInput, Input, EditIcon, Button } from '@ya.praktikum/react-developer-burger-ui-components'
-import { getCookie, checkAndUpdateAccessToken, logout } from "../../services/actions/register-action";
-import { request } from "../../utils/responses";
-import { useDispatch, useSelector } from "react-redux";
+import { PasswordInput, EmailInput, Input,  Button } from '@ya.praktikum/react-developer-burger-ui-components'
+import { getCookie, checkAndUpdateAccessToken, logout } from "../../../services/actions/register-action";
+import { request } from "../../../utils/responses";
+
 
 
 const Profile = () => {
@@ -13,14 +13,13 @@ const Profile = () => {
    const [boolUserAccess, setBoolUserAccess] = useState(false);
    const [boolNewData, setBoolNewData] = useState(false);
 
-   const dispatch = useDispatch()
    const refreshToken = getCookie('refreshToken');
    const accessTokenFromCookie = getCookie('accessToken')
  
 
    const accessToken = accessTokenFromCookie ? accessTokenFromCookie.replace('Bearer%20', '') : "";
    const getUserInfoFromApi = async () =>{
-      console.log("refreshToken",refreshToken)
+
       if(!boolUserAccess){ 
          try{ 
             await checkAndUpdateAccessToken()
@@ -37,11 +36,10 @@ try{
            'Authorization': `Bearer ${accessToken}`,
          },
        })
-       console.log(data)
+
        const {success, user} = data
        setUserData({...profileUserData, name: user.name, email: user.email})
       }catch(error){
-         // await  dispatch(checkAndUpdateAccessToken())
          alert("Попробуйте войти в аккаунт заново")
          console.error("ошибка access токена", error)
       }

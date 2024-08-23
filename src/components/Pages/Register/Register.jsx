@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import { PasswordInput, EmailInput, Input,  Button } from '@ya.praktikum/react-developer-burger-ui-components';
 import style from './Register.module.css';
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { registerUser, updateSuccessState } from '../../services/actions/register-action';
+import { registerUser, updateSuccessState } from '../../../services/actions/register-action';
 
 const Register = () => {
   const [userdata, setUserData] = useState({  email: "test-data@yandex.ru", password: "password", name: "Username"});
@@ -24,7 +24,6 @@ const Register = () => {
 
   useEffect(() => {
     if (userRegister.success && userRegister.user.name.length > 0) {
-      console.log("Перемещаемся на логин");
       if (!isRedirected) {
         navigate("/login");
         setIsRedirected(true);

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import PropTypes, { func } from "prop-types";
+import PropTypes from "prop-types";
 import {
   Tab,
   Counter,
@@ -10,19 +10,17 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   addIngredient,
   removeIngredient,
-} from "../../services/actions/constructor-action";
-import { openIngredientDetails } from "../../services/actions/ingredient-details-open-action";
+} from "../../../services/actions/constructor-action";
+import { openIngredientDetails } from "../../../services/actions/ingredient-details-open-action";
 import { v4 as uuidv4 } from "uuid";
 import { useDrag } from "react-dnd";
-import useOnScreen from "../../hooks/onScreen.hook";
+import useOnScreen from "../../../hooks/onScreen.hook";
 import {
-  Outlet,
   useNavigate,
-  useParams,
   useSearchParams,
 } from "react-router-dom";
 import IngredientPage from "../IngredientPage/IngredientPage";
-import Modal from "../Modal/Modal";
+import Modal from "../../Modal/Modal";
 
 const Card = ({
   id,
@@ -62,12 +60,12 @@ const Card = ({
   const [searchParams, setSearchParams] = useSearchParams();
 
   const setIngredientDetailsOpen = (item) => {
-    //
+
     dispatch(openIngredientDetails(item));
   };
 
   const onAdd = (item) => {
-    // console.log(item);
+
     dispatch(addIngredient(item));
   };
 
@@ -76,7 +74,7 @@ const Card = ({
   };
 
   function onOneClick() {
-    console.log("click");
+
     //!Задаем параметр активной модалки
     const valueModalIsOpen = searchParams.get("modalIsOpen");
 
@@ -127,9 +125,6 @@ const Card = ({
     }
   }, [ingredients, name, bun.text, type]);
 
-  // useEffect(()=>{
-  //   setSearchParams({modalIsOpen:false});
-  // }, [])
   return (
     <div
       ref={dragRef}
@@ -198,11 +193,11 @@ CardTitle.propTypes = {
 };
 
 const CardSets = ({ bunsRef, saucesRef, mainsRef, setCurrentTab }) => {
-  const { global_ingredients } = useSelector((state) => state.ingredients);
+  const  globalIngredients  = useSelector((state) => state.ingredients.globalIngredients);
   const { ingredients } = useSelector((state) => state.constructorList);
-  const buns = global_ingredients.filter((item) => item.type === "bun");
-  const sauces = global_ingredients.filter((item) => item.type === "sauce");
-  const mains = global_ingredients.filter((item) => item.type === "main");
+  const buns = globalIngredients.filter((item) => item.type === "bun");
+  const sauces = globalIngredients.filter((item) => item.type === "sauce");
+  const mains = globalIngredients.filter((item) => item.type === "main");
   const [bunsVisible, setBunsVisible] = useState(true);
 
   //! У компонентов CardTitle слушаю колбэки onHide и onShow и меняю текущий Tab
@@ -434,7 +429,6 @@ function BurgerIngredients() {
           </ul>
         </div>
       </div>
-      {/* Снизу вроде понятно */}
       {modalIsOpen === "true" && (
         <Modal
           onClose={() => closeIngredientDetails()}

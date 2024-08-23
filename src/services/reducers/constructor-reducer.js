@@ -56,7 +56,7 @@ const constructorReducer = (state = initialState, action) => {
              currentIngredients.splice(newIndex, 0, movedItem);
           }
        });
-       console.log(currentIngredients)
+     
        return {
           ...state,
           ingredients: currentIngredients,

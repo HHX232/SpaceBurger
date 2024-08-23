@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { PasswordInput, EmailInput, Button } from '@ya.praktikum/react-developer-burger-ui-components';
 import style from './Login.module.css';
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { newLoginData } from "../../services/actions/register-action";
-import { request } from "../../utils/responses";
+import { newLoginData } from "../../../services/actions/register-action";
+import { request } from "../../../utils/responses";
 
 const Login = () => {
     const [loginUservalue, setLoginUserValue] = useState({ email: '', password: '' });
@@ -28,7 +28,6 @@ const Login = () => {
 
             if (datauser.success) {
                 dispatch(newLoginData(datauser.user.email, datauser.user.name, datauser.accessToken, datauser.refreshToken));
-                console.log("User data:", datauser);
 
                 const redirectPath = location.state?.from?.pathname || "/";
                 navigate(redirectPath, { replace: true });

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import img404 from '../../images/404 error lost in space-amico.svg'
+import img404 from '../../../images/404 error lost in space-amico.svg'
 import style from './NotFound.module.css'
 const NotFoundPage = () =>{
 

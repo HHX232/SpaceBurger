@@ -1,4 +1,4 @@
-import data from '../../utils/data';
+
 import { request } from '../../utils/responses';
 
 export const REGISTER_IN_PROGRESS = "REGISTER_IN_PROGRESS";
@@ -16,7 +16,7 @@ export const markForgotPasswordVisited = () => ({
 });
 
 
-const refreshTokenExpiry = 30 * 24 * 60 * 60 * 1000; // 30 дней
+const refreshTokenExpiry = 30 * 24 * 60 * 60 * 1000;
 export const updateSuccessState = (success) => ({
   type: UPDATE_SUCCESS_STATE,
   success,
@@ -87,13 +87,12 @@ export const setCookie = (name, value, options = {}) => {
 export const clearTokens = () => {
   setCookie('refreshToken', '', { expires: new Date(0) });
   setCookie('accessToken', '', { expires: new Date(0) });
-  console.log('Токены были очищены.');
+ 
 };
 
 
 //выходим из системы
 export const logout = () => {
-  console.log("start logout");
 
   const refreshToken = getCookie("refreshToken");
   if (!refreshToken) {
@@ -108,9 +107,7 @@ export const logout = () => {
   })
   .then(response => {
     const { success } = response;
-
-    console.log("logout", success);
-
+alert("Выход прошел успешно")
     if (success) {
       clearTokens();
       return {
@@ -126,10 +123,11 @@ export const logout = () => {
         expiresIn: 0,
       };
     } else {
-      console.error('Logout failed');
+      alert("Ошибка при выходе")
     }
   })
   .catch(error => {
+    alert("Ошибка при выходе")
     console.error("error in logout: ", error);
   });
 }
@@ -197,7 +195,6 @@ export const updateToken = async () => {
 
   const refreshToken = getCookie('refreshToken');
   if (!refreshToken) {
-    console.log('Пройдите регистрацию')
     alert('Пройдите регистрацию');
     return;
   }
@@ -209,7 +206,7 @@ export const updateToken = async () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token: refreshToken }),
     });
-console.log("response.success", response.success)
+
 
     if (response.success) {
       const { accessToken: newAccessTokenValue, refreshToken: newRefreshToken } = response;
@@ -218,7 +215,7 @@ console.log("response.success", response.success)
 
       setCookie('refreshToken', newRefreshToken, { expires: new Date(Date.now() + refreshTokenExpiry) });
 
-      console.log('AccessToken и RefreshToken были успешно обновлены.');
+    
     } else {
       console.error('Не удалось обновить AccessToken');
     }
@@ -229,26 +226,14 @@ console.log("response.success", response.success)
 
 export const checkAndUpdateAccessToken = async () => {
   const accessToken = getCookie('accessToken');
-
   if (!accessToken) {
-    console.log('AccessToken отсутствует, требуется обновление');
     updateToken()
     return ;
   }
 
-  // Проверяем срок жизни accessToken
-  const tokenExpirationTime = decodeToken(accessToken);
-
-  if (tokenExpirationTime && Date.now() >= tokenExpirationTime) {
-    console.log('Срок действия AccessToken истек, требуется обновление');
-    updateToken()
-    return ;
-  }
-
-  console.log('AccessToken присутствует и еще не истек.');
 };
 
 setInterval(() => {
   checkAndUpdateAccessToken();
-  console.log("Проверка и обновление AccessToken каждые 20 минут");
+
 }, 20 * 60 * 1000); 

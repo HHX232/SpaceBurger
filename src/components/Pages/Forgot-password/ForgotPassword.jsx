@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import style from './ForgotPassword.module.css'
-import { PasswordInput, EmailInput, Input, EditIcon, Button } from '@ya.praktikum/react-developer-burger-ui-components'
+import {  EmailInput, Button } from '@ya.praktikum/react-developer-burger-ui-components'
 import { Link, useNavigate } from "react-router-dom";
-import {request} from '../../utils/responses'
-import { markForgotPasswordVisited } from "../../services/actions/register-action";
+import {request} from '../../../utils/responses'
+import { markForgotPasswordVisited } from "../../../services/actions/register-action";
 import { useDispatch } from "react-redux";
 
 

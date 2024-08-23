@@ -1,10 +1,10 @@
 // Modal.jsx
-import React, { useEffect } from "react";
+import  { useEffect } from "react";
 import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
 import style from "./Modal.module.css";
 import { CloseIcon } from "@ya.praktikum/react-developer-burger-ui-components";
-import { Outlet, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 
 function ModalOverlay({ childrenElem, title, onClose, setSearchParams }) {
   const navigate = useNavigate();

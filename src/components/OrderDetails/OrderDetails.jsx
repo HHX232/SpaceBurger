@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import PropTypes from "prop-types";
 import style from './OrderDetails.module.css';
 import { CloseIcon } from '@ya.praktikum/react-developer-burger-ui-components';
