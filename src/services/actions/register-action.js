@@ -92,21 +92,27 @@ export const clearTokens = () => {
 
 
 //выходим из системы
-export const logout =  () =>{
-  console.log("start logout")
-  const refreshToken = getCookie("refreshToken")
-  if (!refreshToken) { 
+export const logout = () => {
+  console.log("start logout");
+
+  const refreshToken = getCookie("refreshToken");
+  if (!refreshToken) {
     console.error('No refreshToken found');
     return;
   }
-  try{
-   const {success} =  request("auth/logout",{
-      method: "POST",
-      headers:  {'Content-Type': 'application/json'},
-      body: JSON.stringify({token: refreshToken}) 
-    })
-    if(success){
-      clearTokens()
+
+  request("auth/logout", {
+    method: "POST",
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({token: refreshToken})
+  })
+  .then(response => {
+    const { success } = response;
+
+    console.log("logout", success);
+
+    if (success) {
+      clearTokens();
       return {
         type: LOGIN_VALUE_DATA,
         email: '',
@@ -119,13 +125,15 @@ export const logout =  () =>{
         loading: false,
         expiresIn: 0,
       };
-    }else {
+    } else {
       console.error('Logout failed');
     }
-  }catch(error){
-    console.error("error in logout: ", error)
-  }
+  })
+  .catch(error => {
+    console.error("error in logout: ", error);
+  });
 }
+
 
 
 //при входе в существующий акк

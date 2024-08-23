@@ -104,7 +104,7 @@ try{
             <li className={`${style.profile_links_item}`}>
                <Link onClick={e =>{
                
-                  // logout()
+                  logout()
                }} className="text text_type_main-medium text_color_inactive" to="/">Выход</Link>
             </li>
             <li className={`${style.profile_links_text} text-secondary`}>
