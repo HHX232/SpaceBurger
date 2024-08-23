@@ -8,12 +8,11 @@ import { request } from "../../../utils/responses";
 
 
 const Profile = () => {
-   const [profileUserData, setUserData] = useState({name: "yourName", email: "yourEmail@gmail.com2", password: "Are you want create new password?" })
-   const [startInputsValue, setStartInputsValue] = useState({name: "yourName", email: "yourEmail@gmail.com2", password: "Are you want create new password?"})
+   const [profileUserData, setUserData] = useState({name: "", email: "", password: "Are you want create new password?" })
+   const [startInputsValue, setStartInputsValue] = useState({name: "", email: "", password: "Are you want create new password?"})
    const [boolUserAccess, setBoolUserAccess] = useState(false);
    const [boolNewData, setBoolNewData] = useState(false);
 
-   const refreshToken = getCookie('refreshToken');
    const accessTokenFromCookie = getCookie('accessToken')
  
 
@@ -118,7 +117,6 @@ try{
         value={profileUserData.name}
         name={'name'}
         placeholder="Имя"
-      //   isIcon={true}
         extraClass="mb-6"
          icon="EditIcon"
       />
@@ -129,9 +127,7 @@ try{
         value={profileUserData.email}
         name={'email'}
         placeholder="Логин"
-      //   isIcon={true}
         extraClass="mb-6 "
-      //   disabled={false}
             icon="EditIcon"
       />
             </li>

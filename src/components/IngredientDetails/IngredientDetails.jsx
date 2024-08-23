@@ -19,7 +19,7 @@ function IngredientDetails({ ingredientDetailsObject }) {
     proteins = "any amount",
     fats = "any amount",
     carbohydrates = "any amount",
-
+ 
     cardIndex
   } = ingredientDetailsObject;
 
