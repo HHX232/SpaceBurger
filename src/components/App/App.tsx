@@ -109,17 +109,19 @@ const  App = () => {
 
 
   useEffect(() => {
+    const accessToken = getCookie("accessToken")?.replace("%20", " ");
+
     dispatch(setCheckUserLoading(true));
     request("auth/user", {
       headers: {
-        authorization: getCookie("accessToken")?.replace("%20", " "),
+        authorization: accessToken,
       },
     })
       .then((res) => {
-        dispatch(setCheckUserAuth(res.sucess));
+        dispatch(setCheckUserAuth(res.success));
       })
       .catch(() => {
-        dispatch(setCheckUserAuth(null));
+        dispatch(updateToken())
       })
       .finally(() => {
         dispatch(setCheckUserLoading(false));
@@ -127,7 +129,7 @@ const  App = () => {
 
     setInterval(() => {
       if (!isAuthSuccess) {
-        dispatch(updateToken());
+        dispatch(updateToken(accessToken));
         return;
       }
     }, 20 * 60 * 1000);
