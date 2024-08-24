@@ -28,8 +28,6 @@ import {
   updateToken,
 } from "../../services/actions/register-action";
 import { request } from "../../utils/responses";
-import { Action, Dispatch, UnknownAction } from "redux";
-import { ThunkAction, ThunkDispatch } from "redux-thunk";
 
 
 interface IIngredientDetails{
@@ -59,10 +57,10 @@ interface IAppStore {
 }
 const  App = () => {
   //данные через redux
-  const isAuthSuccess = useSelector((store:IAppStore) => store.register.success);
-  const { ingredientObject } = useSelector((store: IAppStore) => store.ingredientDetails);
-  const isOpenOrderDetails = useSelector((store: IAppStore) => store.orderDetails.isOpen);
-  const isOrdertitle = useSelector((store: IAppStore) => store.orderDetails.number);
+  const isAuthSuccess = useSelector((store) => store.register.success);
+  const { ingredientObject } = useSelector((store) => store.ingredientDetails);
+  const isOpenOrderDetails = useSelector((store) => store.orderDetails.isOpen);
+  const isOrdertitle = useSelector((store) => store.orderDetails.number);
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -109,6 +107,31 @@ const  App = () => {
   }, [dispatch, isAuthSuccess]);
   
 
+
+  useEffect(() => {
+    dispatch(setCheckUserLoading(true));
+    request("auth/user", {
+      headers: {
+        authorization: getCookie("accessToken")?.replace("%20", " "),
+      },
+    })
+      .then((res) => {
+        dispatch(setCheckUserAuth(res.sucess));
+      })
+      .catch(() => {
+        dispatch(setCheckUserAuth(null));
+      })
+      .finally(() => {
+        dispatch(setCheckUserLoading(false));
+      });
+
+    setInterval(() => {
+      if (!isAuthSuccess) {
+        dispatch(updateToken());
+        return;
+      }
+    }, 20 * 60 * 1000);
+  }, []);
 
   const handleCloseOrderDetails = () => {
     dispatch(closeOrderDetails());
