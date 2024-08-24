@@ -17,6 +17,7 @@ const Profile = () => {
  
 
    const accessToken = accessTokenFromCookie ? accessTokenFromCookie.replace('Bearer%20', '') : "";
+
    const getUserInfoFromApi = async () =>{
 
       if(!boolUserAccess){ 
@@ -35,7 +36,6 @@ try{
            'Authorization': `Bearer ${accessToken}`,
          },
        })
-
        const {success, user} = data
        setUserData({...profileUserData, name: user.name, email: user.email})
       }catch(error){
@@ -53,7 +53,7 @@ try{
    
    const onChange = e => {
       setUserData({ ...profileUserData, [e.target.name]: e.target.value });
-      setBoolNewData(true); // Показать кнопки сохранения
+      setBoolNewData(true); 
    };
 
    const onSaveChanges = async () => {

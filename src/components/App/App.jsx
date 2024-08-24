@@ -21,9 +21,17 @@ import ProtectedRouteElement from "../ProtectedRouteElement/ProtectedRouteElemen
 import UnprotectedRouteElement from "../UnprotectedRouteElement/UnprotectedRouteElement";
 import ProtectedResetPasswordRoute from "../ProtectedResetPasswordRoute/ProtectedResetPasswordRoute";
 import IngredientPage from "../Pages/IngredientPage/IngredientPage";
+import {
+  getCookie,
+  setCheckUserAuth,
+  setCheckUserLoading,
+  updateToken,
+} from "../../services/actions/register-action";
+import { request } from "../../utils/responses";
 
 function App() {
   //данные через redux
+  const isAuthSuccess = useSelector((store) => store.register.success);
   const { ingredientObject } = useSelector((store) => store.ingredientDetails);
   const isOpenOrderDetails = useSelector((store) => store.orderDetails.isOpen);
   const isOrdertitle = useSelector((store) => store.orderDetails.number);
@@ -39,6 +47,31 @@ function App() {
   useEffect(() => {
     dispatch(takeIngredients());
   }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(setCheckUserLoading(true));
+    request("auth/user", {
+      headers: {
+        authorization: getCookie("accessToken")?.replace("%20", " "),
+      },
+    })
+      .then((res) => {
+        dispatch(setCheckUserAuth(res.success));
+      })
+      .catch(() => {
+        dispatch(setCheckUserAuth(null));
+      })
+      .finally(() => {
+        dispatch(setCheckUserLoading(false));
+      });
+
+    setInterval(() => {
+      if (!isAuthSuccess) {
+        dispatch(updateToken());
+        return;
+      }
+    }, 20 * 60 * 1000);
+  }, []);
 
   const handleCloseOrderDetails = () => {
     dispatch(closeOrderDetails());
