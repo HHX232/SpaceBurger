@@ -185,16 +185,6 @@ export const registerUser = (registerMail, registerPassword, registerName) => {
   };
 };
 
-// Функция для декодирования JWT и извлечения времени истечения
-const decodeToken = (token) => {
-  try {
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    return payload.exp * 1000;
-  } catch (e) {
-    console.error("Не удалось декодировать токен:", e);
-    return null;
-  }
-};
 
 export const updateToken = async () => {
   const refreshToken = getCookie("refreshToken");
@@ -209,7 +199,7 @@ export const updateToken = async () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token: refreshToken }),
     });
-
+    console.log("response", response)
     if (response.success) {
       const {
         accessToken: newAccessTokenValue,
@@ -218,7 +208,7 @@ export const updateToken = async () => {
 
       setCookie("accessToken", newAccessTokenValue, {
         expires: new Date(Date.now() + 20 * 60 * 1000),
-      }); // 20 минут
+      }); 
 
       setCookie("refreshToken", newRefreshToken, {
         expires: new Date(Date.now() + refreshTokenExpiry),
