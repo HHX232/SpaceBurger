@@ -3,8 +3,8 @@ export const TAKE_INGREDIENTS_PROGRESS = "TAKE_INGREDIENTS_PROGRESS";
 export const TAKE_INGREDIENTS_SUCCESS = "TAKE_INGREDIENTS_SUCCESS"; 
 export const TAKE_INGREDIENTS_ERROR = "TAKE_INGREDIENTS_ERROR";
 
-
-
+ 
+ 
 export function takeIngredients() { 
   return function (dispatch) {
     dispatch({ type: TAKE_INGREDIENTS_PROGRESS });

@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import  { useMemo } from "react";
 import PropTypes from "prop-types";
 import style from "../BurgerConstructor/BurgerConstructor.module.css";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,13 +9,13 @@ import {
   DragIcon,
   Button,
 } from "@ya.praktikum/react-developer-burger-ui-components";
-import IngredientType from "../../utils/types";
+import IngredientType from "../../../utils/types";
 import {
   addIngredient,
   removeIngredient,
   reorderIngredients, 
-} from "../../services/actions/constructor-action";
-import { submitOrder } from "../../services/actions/order-details-action";
+} from "../../../services/actions/constructor-action";
+import { submitOrder } from "../../../services/actions/order-details-action";
 import { useDrop } from "react-dnd";
 import { v4 as uuidv4 } from "uuid";
 
@@ -174,7 +174,7 @@ const BurgerConstructor = () => {
         >
           {loading ? "Отправка..." : "Оформить заказ"}
         </Button>
-        {/* {error && <p style={{ color: "red" }}>Ошибка: {error}</p>} */}
+
       </div>
     </div>
   );

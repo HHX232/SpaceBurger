@@ -1,0 +1,26 @@
+.login_section{
+   width: 100%;
+   height: calc(100vh - 89px);
+   display: flex;
+   flex-direction: column;
+   gap: 24px;
+   justify-content: center;
+   align-items: center;
+}
+.login_button{
+   max-width: fit-content;
+}
+.login_link{
+   color: #4C4CFE !important;
+   transition: all .2s;
+}
+.login_link:hover{
+text-decoration: underline 1px solid #4C4CFE;
+text-underline-offset: 2px;
+}
+.login__text_box{
+   display: flex;
+   flex-direction: column;
+   text-align: center;
+   gap: 16px;
+}

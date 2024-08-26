@@ -5,7 +5,7 @@ import {
  } from '../actions/ingredient-action';
  
  const initialState = {
-   global_ingredients: [],
+   globalIngredients: [], 
    ingredientsProgress: false,
    ingredientsFaild: false
  };
@@ -17,7 +17,7 @@ import {
        return { ...state, ingredientsProgress: true, ingredientsFaild: false };
      case TAKE_INGREDIENTS_SUCCESS:
        console.log("ingredients ready");
-       return { ...state, global_ingredients: action.ingredients, ingredientsProgress: false, ingredientsFaild: false };
+       return { ...state, globalIngredients: action.ingredients, ingredientsProgress: false, ingredientsFaild: false };
      case TAKE_INGREDIENTS_ERROR:
        console.log("ERROR!!!!");
        return { ...state, ingredientsProgress: false, ingredientsFaild: true };

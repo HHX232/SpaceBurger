@@ -9,3 +9,4 @@ export const closeIngredientDetails = ()=>({
     type: INGREDIENT_DETAILS_IS_CLOSE,
     payload: null
 })
+ 

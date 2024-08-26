@@ -1,4 +1,3 @@
-// actions/order-details-action.js
 import {request} from '../../utils/responses'
 export const ORDER_DETAILS_OPEN = "ORDER_DETAILS_OPEN";
 export const ORDER_DETAILS_CLOSE = "ORDER_DETAILS_CLOSE";
@@ -6,7 +5,7 @@ export const ORDER_REQUEST = "ORDER_REQUEST";
 export const ORDER_SUCCESS = "ORDER_SUCCESS";
 export const ORDER_FAILURE = "ORDER_FAILURE";
 
-export const openOrderDetails = (number) => ({
+export const openOrderDetails = (number) => ({ 
   type: ORDER_DETAILS_OPEN,
   number: number
 });
@@ -23,7 +22,7 @@ export const orderRequest = () => ({
 export const orderSuccess = (orderNumber) => ({
   type: ORDER_SUCCESS,
   orderNumber,
-});
+}); 
 
 export const orderFailure = (error) => ({
   type: ORDER_FAILURE,
@@ -35,7 +34,7 @@ export const submitOrder = (ingredients) => {
     dispatch(orderRequest());
     try {
       if(ingredients[1] === undefined || ingredients[1] === null){
-        // console.log("new error")
+
         alert("выберите сначала булочку, пожалуйста")
         throw new Error("выберите булочку")}
       const data = await request('orders', {
