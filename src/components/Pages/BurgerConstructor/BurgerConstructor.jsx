@@ -9,7 +9,7 @@ import {
   DragIcon,
   Button,
 } from "@ya.praktikum/react-developer-burger-ui-components";
-import IngredientType from "../../../utils/types";
+
 import {
   addIngredient,
   removeIngredient,
@@ -180,14 +180,5 @@ const BurgerConstructor = () => {
   );
 };
 
-BurgerConstructor.propTypes = {
-  ingredients: PropTypes.arrayOf(IngredientType),
-  bun: PropTypes.shape({
-    originalId: PropTypes.string.isRequired,
-    text: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-    image: PropTypes.string.isRequired,
-  }),
-};
 
 export default BurgerConstructor;
