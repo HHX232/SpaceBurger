@@ -7,9 +7,13 @@ P.S. Говядину не подаем 🛸🍔
 ## Используемые технологии
 
 - React
+- TypeScript
 - React Router
+- React dnd
+- WebSocket
 - Redux
 - CSS Modules
+- Framer motion
 
 
 ## Структура проекта
