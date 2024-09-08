@@ -1,9 +1,16 @@
+import Ingredient from '../../utils/types';
 import { 
    TAKE_INGREDIENTS_PROGRESS, 
    TAKE_INGREDIENTS_SUCCESS, 
    TAKE_INGREDIENTS_ERROR 
  } from '../actions/ingredient-action';
- 
+
+ export interface IIngredientsState {
+  globalIngredients: Ingredient[]; 
+  ingredientsProgress: boolean;
+  ingredientsFaild: boolean;
+ }
+
  const initialState = {
    globalIngredients: [], 
    ingredientsProgress: false,

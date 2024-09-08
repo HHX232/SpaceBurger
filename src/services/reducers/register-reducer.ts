@@ -17,7 +17,7 @@ interface User {
   name: string;
 }
 
-interface RegisterState {
+export interface RegisterState {
   loading: boolean;
   success: boolean;
   errorRegister: boolean;

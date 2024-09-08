@@ -21,7 +21,7 @@ import {
    __v: number;
    generatedId?: string; 
  }
- interface ConstructorState {
+ export interface ConstructorState {
    ingredients: BigIngredient[];
    bun: BigIngredient;
  }

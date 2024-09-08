@@ -1,9 +1,18 @@
 import { combineReducers } from 'redux';
-import ingredientReducer from './ingredient-reducer'; 
-import constructorReducer from './constructor-reducer'
-import ingredientDetailsReducer from './ingredient-details-open-reducer'
-import orderDetailsReducer from './order-details-reducer'
-import registerReducer from './register-reducer'
+import ingredientReducer, { IIngredientsState } from './ingredient-reducer'; 
+import constructorReducer, { ConstructorState } from './constructor-reducer'
+import ingredientDetailsReducer, { IIngredientDetailsState } from './ingredient-details-open-reducer'
+import orderDetailsReducer, { IOrderDetailsState } from './order-details-reducer'
+import registerReducer, { RegisterState } from './register-reducer'
+
+export interface IRootReducers {
+    ingredients: IIngredientsState,
+    constructorList: ConstructorState,
+    ingredientDetails: IIngredientDetailsState,
+    orderDetails: IOrderDetailsState,
+    register: RegisterState, 
+}
+
 const rootReducer = combineReducers({
    //ingredients берется с сервера и прекрасно работает вообще
     ingredients: ingredientReducer,
