@@ -208,7 +208,6 @@ export const registerUser: (registerMail: string, registerPassword: string, regi
 };
 
 
-
 export const updateToken = async () => {
   const refreshToken = getCookie("refreshToken");
   if (!refreshToken) {
@@ -217,7 +216,7 @@ export const updateToken = async () => {
   }
 
   try {
-    const response:IRegisterResponse = await request("auth/token", {
+    const response: IRegisterResponse = await request("auth/token", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token: refreshToken }),
@@ -238,6 +237,7 @@ export const updateToken = async () => {
       }
     );}else{console.error("Error with newRefreshToken")}
       
+      return { type: 'UPDATE_TOKEN_SUCCESS' };
     } else {
       console.error("Не удалось обновить AccessToken");
     }
@@ -245,6 +245,7 @@ export const updateToken = async () => {
     console.error("Ошибка при обновлении AccessToken:", error);
   }
 };
+
 
 
 export const setCheckUserLoading = (isLoading:boolean) => ({

@@ -17,7 +17,7 @@ const checkSuccess = <T>(res: T & { success: boolean }): Promise<T> => {
 };
 
 // Generic request function
-export const request = <T>(endpoint: string, options: RequestInit): Promise<T> => {
+export const request = <T>(endpoint: string, options: object): Promise<T> => {
   return fetch(`${BASE_URL}${endpoint}`, options)
     .then(checkResponse)
     .then(checkSuccess);

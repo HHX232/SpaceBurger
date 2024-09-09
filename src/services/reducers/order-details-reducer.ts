@@ -6,6 +6,13 @@ import {
   ORDER_FAILURE,
 } from '../actions/order-details-action';
 
+export interface IOrderDetailsState {
+  isOpen: boolean,
+  number: string,
+  loading: boolean,
+  error: unknown,
+}
+
 const initialState = {
   isOpen: false,
   number: "11100",

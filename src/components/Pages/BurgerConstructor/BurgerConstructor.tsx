@@ -1,4 +1,4 @@
-import  { useMemo } from "react";
+import  { FC, useMemo } from "react";
 import PropTypes from "prop-types";
 import style from "../BurgerConstructor/BurgerConstructor.module.css";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,8 +18,21 @@ import {
 import { submitOrder } from "../../../services/actions/order-details-action";
 import { useDrop } from "react-dnd";
 import { v4 as uuidv4 } from "uuid";
+import Ingredient from "../../../utils/types";
 
-const generateUniqueId = (ingredients) => {
+export interface IIngredient{
+  generatedId: string;
+  text: string;
+  price: number;
+  image: string;
+  id?:string;
+  name?:string;
+  originalId?: string
+}
+interface IMassIngredients{
+  ingredients:IIngredient[]
+}
+const generateUniqueId = (ingredients: IIngredient[]) => {
   let newId = uuidv4();
   while (ingredients.some(item => item.generatedId === newId)) {
     newId = uuidv4();
@@ -27,10 +40,10 @@ const generateUniqueId = (ingredients) => {
   return newId;
 };
 
-function BurgerItem({ generatedId, text, price, image }) {
+const BurgerItem:FC<IIngredient> = ({ generatedId="", text, price, image })=> {
   const dispatch = useDispatch();
 
-  const onRemove = (generatedId) => {
+  const onRemove = (generatedId = "without gen-id") => {
     dispatch(removeIngredient(generatedId));
   };
 
@@ -48,26 +61,19 @@ function BurgerItem({ generatedId, text, price, image }) {
   );
 }
 
-BurgerItem.propTypes = {
-  generatedId: PropTypes.string.isRequired,
-  text: PropTypes.string.isRequired,
-  price: PropTypes.number.isRequired,
-  image: PropTypes.string.isRequired,
-};
-
-function BurgerList({ ingredients }) {
+const BurgerList : FC<IMassIngredients> =({ ingredients }) => {
   const dispatch = useDispatch();
-  const setIngredients = (newItems) => {
+  const setIngredients = (newItems: Ingredient[] = []) => {
     // Передаем новый массив в reducer
     dispatch(reorderIngredients(newItems));
   };
 
   return (
-    <Reorder.Group
+    <Reorder.Group<IIngredient>
       className={`${style.constructor__list} ${style.custom__scrollbar}`}
       axis="y"
       values={ingredients}
-      onReorder={setIngredients}
+      onReorder={(newOrder: IIngredient[]) => setIngredients(newOrder as Ingredient[])}
     >
       {ingredients.map((item) => (
         <Reorder.Item
@@ -76,7 +82,7 @@ function BurgerList({ ingredients }) {
           className={`${style.constructor__list_el}`}
         >
           <BurgerItem
-            generatedId={item.generatedId}
+            generatedId={item.generatedId ?? ""}
             text={item.text}
             price={item.price}
             image={item.image}
@@ -87,27 +93,25 @@ function BurgerList({ ingredients }) {
   );
 }
 
-BurgerList.propTypes = {
-  ingredients: PropTypes.arrayOf(
-    PropTypes.shape({
-      generatedId: PropTypes.string.isRequired,
-      originalId: PropTypes.string.isRequired,
-      text: PropTypes.string.isRequired,
-      price: PropTypes.number.isRequired,
-      image: PropTypes.string.isRequired,
-      type: PropTypes.string.isRequired,
-    }).isRequired
-  ).isRequired,
-};
- 
+interface IBurgerConstructorState{
+  constructorList:{
+    ingredients: IIngredient[];
+    bun: IIngredient;
+  }
+  orderDetails:{
+    loading: boolean;
+    error: unknown;
+  }
+}
+
 const BurgerConstructor = () => {
   const dispatch = useDispatch();
-  const { ingredients, bun } = useSelector((state) => state.constructorList);
-  const { loading, error } = useSelector((state) => state.orderDetails);
+  const { ingredients, bun } = useSelector((state: IBurgerConstructorState) => state.constructorList);
+  const { loading, error } = useSelector((state: IBurgerConstructorState) => state.orderDetails);
 
   const [{ isOver }, dropRef] = useDrop(() => ({
     accept: "ingridient",
-    drop: (item) => {
+    drop: (item: Ingredient) => {
       const generatedId = generateUniqueId(ingredients);
       const newItem = { ...item, generatedId };
       dispatch(addIngredient(newItem));
@@ -118,14 +122,19 @@ const BurgerConstructor = () => {
   }));
 
   const handleOrder = () => {
-    const ingredientIds = [
-      bun.originalId,
-      ...ingredients.map((item) => item.originalId),
-      bun.originalId,
-    ];
-    dispatch(submitOrder(ingredientIds));
+    if (bun && ingredients.length > 0) {
+      const ingredientIds = [
+        bun.originalId ?? "",
+        ...ingredients.map((item) => item.originalId ?? ""),
+        bun.originalId ?? "",
+      ];
+      //!может не работать, но вроде работает
+      //? Если вы знаете как сделать это правильнее, то подскажите пожалуйста с примером кода, а то день потратил на это:)
+      submitOrder(ingredientIds)(dispatch);
+    } else {
+      alert("выберите сначала булочку и добавьте ингредиенты");
+    }
   };
-
   const totalPrice = useMemo(() => {
     return ingredients.reduce(
       (total, item) => total + item.price,
@@ -163,7 +172,11 @@ const BurgerConstructor = () => {
           <p className={`${style.total__number} text text_type_digits-medium`}>
             {totalPrice}
           </p>
-          <CurrencyIcon type="primary" className={style.total_icon} />
+            {
+              //Был удален classname, поскольку вызывало непонятную ошибку
+            }
+
+          <CurrencyIcon type="primary" />
         </div>
         <Button
           onClick={handleOrder}

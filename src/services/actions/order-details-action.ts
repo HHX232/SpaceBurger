@@ -1,6 +1,7 @@
 import { Dispatch } from 'redux';
 import {request} from '../../utils/responses'
 import Ingredient from '../../utils/types';
+import { IIngredient } from '../../components/Pages/BurgerConstructor/BurgerConstructor';
 export const ORDER_DETAILS_OPEN = "ORDER_DETAILS_OPEN" as const;
 export const ORDER_DETAILS_CLOSE = "ORDER_DETAILS_CLOSE" as const;
 export const ORDER_REQUEST = "ORDER_REQUEST" as const;
@@ -36,7 +37,7 @@ interface OrderResponse {
   };
 }
 
-export const submitOrder = (ingredients: Ingredient[]) => {
+export const submitOrder = (ingredients: string[]) => {
   return async (dispatch: Dispatch) => {
     dispatch(orderRequest());
     try {

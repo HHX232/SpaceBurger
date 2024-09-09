@@ -2,7 +2,7 @@ import Ingredient from "../../utils/types"
 
 export const INGREDIENT_DETAILS_IS_OPEN = "INGREDIENT_DETAILS_IS_OPEN"
 export const INGREDIENT_DETAILS_IS_CLOSE = "INGREDIENT_DETAILS_IS_CLOSE"
-type Tingredient = {
+export type Tingredient = {
   _id: string | number;
   id:string | number;
   text: string;

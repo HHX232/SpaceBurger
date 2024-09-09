@@ -11,7 +11,10 @@ interface Ingredient {
   image_mobile: string;
   image_large: string;
   __v: number;
-  isOpen?:boolean| string | null
+  isOpen?:boolean| string | null;
+  name?:string;
+  food_title?: string;
+  generatedId?:string
 }
 
 export default Ingredient;

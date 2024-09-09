@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { FC, useEffect } from "react";
 import AppHeader from "../AppHeader/AppHeader";
 import BurgerIngredients from "../Pages/BurgerIngredients/BurgerIngredients";
 import BurgerConstructor from "../Pages/BurgerConstructor/BurgerConstructor";
@@ -28,8 +28,8 @@ import {
   updateToken,
 } from "../../services/actions/register-action";
 import { request } from "../../utils/responses";
-import { Action, Dispatch, UnknownAction } from "redux";
-import { ThunkAction, ThunkDispatch } from "redux-thunk";
+import { Action } from "redux";
+import { ThunkDispatch } from "redux-thunk";
 
 
 interface IIngredientDetails{
@@ -60,9 +60,9 @@ interface IAppStore {
 const  App = () => {
   //данные через redux
   const isAuthSuccess = useSelector((store:IAppStore) => store.register.success);
-  const { ingredientObject } = useSelector((store: IAppStore) => store.ingredientDetails);
-  const isOpenOrderDetails = useSelector((store: IAppStore) => store.orderDetails.isOpen);
-  const isOrdertitle = useSelector((store: IAppStore) => store.orderDetails.number);
+  const { ingredientObject } = useSelector((store:IAppStore) => store.ingredientDetails);
+  const isOpenOrderDetails = useSelector((store:IAppStore) => store.orderDetails.isOpen);
+  const isOrdertitle = useSelector((store:IAppStore) => store.orderDetails.number);
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -109,6 +109,45 @@ const  App = () => {
   }, [dispatch, isAuthSuccess]);
   
 
+  useEffect(() => {
+    const accessToken = getCookie("accessToken")?.replace("%20", " ");
+  
+    dispatch(setCheckUserLoading(true));
+    request("auth/user", {
+      headers: {
+        authorization: accessToken,
+      },
+    })
+      .then((res) => {
+        const response = res as { success: boolean };
+        dispatch(setCheckUserAuth(response.success));
+      })
+      .catch((error: Error) => {
+        console.error('Error checking user auth:', error);
+        updateToken().then((action) => {
+          if (action) {
+            dispatch(action);
+          }
+        });
+      })
+      .finally(() => {
+        dispatch(setCheckUserLoading(false));
+      });
+  
+    const intervalId = setInterval(() => {
+      if (!isAuthSuccess) {
+        updateToken().then((action) => {
+          if (action) {
+            dispatch(action);
+          }
+        });
+      }
+    }, 20 * 60 * 1000);
+  
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
 
   const handleCloseOrderDetails = () => {
     dispatch(closeOrderDetails());
