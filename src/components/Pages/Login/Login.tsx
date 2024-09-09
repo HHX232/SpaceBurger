@@ -37,17 +37,17 @@ const Login = () => {
 
             if (datauser.success) {
                 dispatch(newLoginData(datauser.user.email, datauser.user.name, datauser.accessToken, datauser.refreshToken));
-
                 const redirectPath = location.state?.from?.pathname || "/";
                 navigate(redirectPath, { replace: true });
             }
         } catch (error) {
-            alert("Ошибка в данных пользователя");
+            console.error("Ошибка в данных пользователя")
         }
     }
 
     return (
         <section className={`${style.login_section} container`}>
+            <form className={`${style.login_section} `} onSubmit={onLoginButton}>
             <h2 className={`${style.register_title} text text_type_main-medium`}>Вход</h2>
             <EmailInput
                 onChange={onChange}
@@ -79,6 +79,7 @@ const Login = () => {
                     <Link to="/forgot-password" className={`${style.login_link} ml-2 text-secondary`}>Восстановить пароль</Link>
                 </p>
             </div>
+            </form>
         </section>
     );
 }

@@ -8,13 +8,12 @@ P.S. Говядину не подаем 🛸🍔
 
 - React
 - TypeScript
+- WebSocket
 - React Router
 - React dnd
-- WebSocket
+- Framer motion
 - Redux
 - CSS Modules
-- Framer motion
-
 
 ## Структура проекта
 Потерялась в недрах галактики

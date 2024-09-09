@@ -19,6 +19,9 @@ import { submitOrder } from "../../../services/actions/order-details-action";
 import { useDrop } from "react-dnd";
 import { v4 as uuidv4 } from "uuid";
 import Ingredient from "../../../utils/types";
+import { useLocation, useNavigate } from "react-router-dom";
+import { getCookie } from "../../../services/actions/register-action";
+import { request } from "../../../utils/responses";
 
 export interface IIngredient{
   generatedId: string;
@@ -106,10 +109,12 @@ interface IBurgerConstructorState{
 
 const BurgerConstructor = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate()
+  const currentLocation = useLocation()
   const { ingredients, bun } = useSelector((state: IBurgerConstructorState) => state.constructorList);
   const { loading, error } = useSelector((state: IBurgerConstructorState) => state.orderDetails);
 
-  const [{ isOver }, dropRef] = useDrop(() => ({
+  const [{ isOver }, dropRef] = useDrop(() => ({ 
     accept: "ingridient",
     drop: (item: Ingredient) => {
       const generatedId = generateUniqueId(ingredients);
@@ -121,16 +126,29 @@ const BurgerConstructor = () => {
     }),
   }));
 
-  const handleOrder = () => {
+  const handleOrder = async () => {
+    try{
+     const accessCookie = getCookie('accessToken')
+     const refreshCookie = getCookie('refreshToken')
+      const data:{success: boolean, accessToken: string, refreshToken:string} = await request("auth/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: refreshCookie }),
+      })
+      if(!data.success){
+        throw new Error("Ошибка ответа от сервера")
+      }
+    }catch(err){
+      navigate("/login", { state: { from: { pathname: currentLocation } } });
+      return
+    }
     if (bun && ingredients.length > 0) {
       const ingredientIds = [
         bun.originalId ?? "",
         ...ingredients.map((item) => item.originalId ?? ""),
         bun.originalId ?? "",
       ];
-      //!может не работать, но вроде работает
-      //? Если вы знаете как сделать это правильнее, то подскажите пожалуйста с примером кода, а то день потратил на это:)
-      submitOrder(ingredientIds)(dispatch);
+       submitOrder(ingredientIds)(dispatch);
     } else {
       alert("выберите сначала булочку и добавьте ингредиенты");
     }

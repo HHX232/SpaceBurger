@@ -129,7 +129,7 @@ export const logout = () => {
     .then((response) => {
       const logoutResponse = response as IRegisterResponse;
     const { success } = logoutResponse
-      alert("Выход прошел успешно");
+  
       if (success) {
         clearTokens();
         return {
@@ -145,11 +145,10 @@ export const logout = () => {
           expiresIn: 0,
         };
       } else {
-        alert("Ошибка при выходе");
+     console.error("Ошибка при входе")
       }
     })
     .catch((error) => {
-      alert("Ошибка при выходе");
       console.error("error in logout: ", error);
     });
 };
@@ -211,7 +210,7 @@ export const registerUser: (registerMail: string, registerPassword: string, regi
 export const updateToken = async () => {
   const refreshToken = getCookie("refreshToken");
   if (!refreshToken) {
-    alert("Пройдите регистрацию");
+    console.error("Не пройдена регистрация")
     return;
   }
 
