@@ -1,4 +1,4 @@
-import  { useState, useEffect } from "react";
+import  { useState, useEffect, FormEventHandler, FormEvent } from "react";
 import { PasswordInput, EmailInput, Input,  Button } from '@ya.praktikum/react-developer-burger-ui-components';
 import style from './Register.module.css';
 import { Link, useNavigate } from "react-router-dom";
@@ -40,7 +40,8 @@ const Register = () => {
     };
   }, [dispatch]);
 
-  const onButtonSubmit = () => {
+  const onButtonSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
     dispatch(registerUser(userdata.email, userdata.password, userdata.name));
   };
 
@@ -69,6 +70,7 @@ const Register = () => {
 
    return (
       <section className={`${style.register_section} container`}>
+        <form className={`${style.register_section}`} onSubmit={onButtonSubmit}>
          <h2 className={`${style.register_title} text text_type_main-medium`}>Регистрация</h2>
          <div className={`${style.inputs_box}`}>
             <Input
@@ -90,8 +92,7 @@ const Register = () => {
                name={'password'}
             />
             <Button
-               onClick={onButtonSubmit}
-               htmlType="button"
+               htmlType="submit"
                type="primary"
                size="medium"
                extraClass={`${style.register_button} mb-15`}>
@@ -102,6 +103,7 @@ const Register = () => {
             Уже зарегистрированы?
             <Link to="/login" className={`${style.register_link} ml-2 text-secondary`}>Войти</Link>
          </p>
+         </form>
       </section>
    );
 };

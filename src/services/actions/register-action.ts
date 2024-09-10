@@ -243,8 +243,39 @@ export const updateToken = async () => {
   } catch (error) {
     console.error("Ошибка при обновлении AccessToken:", error);
   }
-};
+}
 
+interface IDataUser{
+  success:boolean;
+  user:{
+      email: string;
+      name: string;
+  }
+  accessToken:string
+  refreshToken:string
+}
+
+export const loginUserThunk = (loginUservalue: { email: string; password: string }, navigate: any, location: any) => {
+  return async (dispatch: Dispatch) => {
+    try {
+      const datauser: IDataUser = await request("auth/login", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(loginUservalue),
+      });
+
+      if (datauser.success) {
+        dispatch(newLoginData(datauser.user.email, datauser.user.name, datauser.accessToken, datauser.refreshToken));
+        const redirectPath = location.state?.from?.pathname || "/";
+        navigate(redirectPath, { replace: true });
+      }
+    } catch (error) {
+      console.error("Ошибка в данных пользователя");
+    }
+  };
+};
 
 
 export const setCheckUserLoading = (isLoading:boolean) => ({
@@ -259,4 +290,62 @@ export const setCheckUserAuth = (isSuccess:boolean) => ({
 
 export const checkAndUpdateAccessToken = async () => {
   
+};
+
+export const passwordResetThunk = (password: string, token: string, navigate: (path: string) => void) => {
+  return async (): Promise<void> => {
+    try {
+      const response = await fetch('https://norma.nomoreparties.space/api/password-reset/reset', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ password: password, token: `${token}` }),
+      });
+
+      const typedResponse = await response.json();
+console.log(typedResponse)
+try{
+      if (typedResponse.success) {
+        navigate("/profile");
+      } else {
+        throw new Error(typedResponse.message);
+      }
+    }catch(err){console.log(err)}
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      } else {
+        console.log("Unknown error occurred")
+      }
+    }
+  };
+};
+
+interface ResetPasswordResponse {
+  success: boolean;
+  message: string;
+}
+
+export const forgotPasswordThunk = (email: string, navigate: (path: string) => void) => {
+  return async (): Promise<void> => {
+    try {
+      const response: ResetPasswordResponse = await request("password-reset", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (response.success) {
+        navigate("/reset-password"); // Navigate to the reset password page
+      } else {
+        alert(response.message); // Handle error by showing alert
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+      alert(errorMessage);
+    }
+  };
 };

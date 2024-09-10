@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { PasswordInput, EmailInput, Button } from '@ya.praktikum/react-developer-burger-ui-components';
 import style from './Login.module.css';
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { newLoginData } from "../../../services/actions/register-action";
+import { loginUserThunk, newLoginData } from "../../../services/actions/register-action";
 import { request } from "../../../utils/responses";
 
 interface IDataUser{
@@ -25,25 +25,10 @@ const Login = () => {
         setLoginUserValue({ ...loginUservalue, [e.target.name]: e.target.value });
     }
 
-    const onLoginButton = async () => {
-        try {
-            const datauser:IDataUser = await request("auth/login", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(loginUservalue)
-            });
-
-            if (datauser.success) {
-                dispatch(newLoginData(datauser.user.email, datauser.user.name, datauser.accessToken, datauser.refreshToken));
-                const redirectPath = location.state?.from?.pathname || "/";
-                navigate(redirectPath, { replace: true });
-            }
-        } catch (error) {
-            console.error("Ошибка в данных пользователя")
-        }
-    }
+    const onLoginButton = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        loginUserThunk(loginUservalue, navigate, location)(dispatch)
+      };
 
     return (
         <section className={`${style.login_section} container`}>
@@ -61,8 +46,7 @@ const Login = () => {
                 name={'password'}
             />
             <Button
-                onClick={onLoginButton}
-                htmlType="button"
+                htmlType="submit"
                 type="primary"
                 size="medium"
                 extraClass={`${style.login_button} mb-15`}

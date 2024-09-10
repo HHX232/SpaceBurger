@@ -128,7 +128,7 @@ const BurgerConstructor = () => {
 
   const handleOrder = async () => {
     try{
-     const accessCookie = getCookie('accessToken')
+
      const refreshCookie = getCookie('refreshToken')
       const data:{success: boolean, accessToken: string, refreshToken:string} = await request("auth/token", {
         method: "POST",

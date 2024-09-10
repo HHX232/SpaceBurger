@@ -89,7 +89,8 @@ try{
       setBoolNewData(false);
    };
 
-   return <section className={`container pt-30`}>
+   return <section className={`container`}>
+      <form className={`container pt-30`} onSubmit={onSaveChanges}>
       <div className={`${style.profile_content}`}>
          <ul className={`${style.profile_links}  `}>
             <li className={`${style.profile_links_item}`}>
@@ -143,7 +144,7 @@ try{
             {boolNewData ? <li className={`${style.inputs_list_item} mt-2`}>
                <p className={`${style.submit_data} text text_type_main-default `}>Хотите сохранить изменения?</p>
                <div className={`${style.button_box}`}>
-               <Button htmlType="button" type="primary" size="medium" onClick={onSaveChanges}>
+               <Button htmlType="submit" type="primary" size="medium" >
 Сохранить
 </Button>
 <Button htmlType="button" type="secondary" size="large" onClick={onCancelChanges}>
@@ -154,6 +155,7 @@ try{
             
          </ul>
       </div>
+      </form>
    </section>
 }
 

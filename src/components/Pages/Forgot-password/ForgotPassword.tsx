@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import style from "./ForgotPassword.module.css";
 import {
   EmailInput,
@@ -6,7 +6,7 @@ import {
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import { Link, useNavigate } from "react-router-dom";
 import { request } from "../../../utils/responses";
-import { markForgotPasswordVisited } from "../../../services/actions/register-action";
+import { forgotPasswordThunk, markForgotPasswordVisited } from "../../../services/actions/register-action";
 import { useDispatch } from "react-redux";
 
 const ForgotPassword = () => {
@@ -25,25 +25,16 @@ const ForgotPassword = () => {
     success: boolean;
     message: string;
   }
- async function onResButton() {
-  const response: ResetPasswordResponse = await request("password-reset", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ email: mailForgot }),
-  });
-
-  if (response.success) {
-    navigate("/reset-password");
-  } else {
-    alert(response.message);
+  async function onResButton(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+forgotPasswordThunk(mailForgot, navigate)()
+   
   }
-}
 
   return (
-    <section className={`${style.forgot_section} container`}>
-      <h2 className={`${style.register_title} text text_type_main-medium`}>
+    <section className={`${style.forgot_section} `}>
+      <form className={`${style.forgot_section} container`}  onSubmit={onResButton}>
+      <h2  className={`${style.register_title} text text_type_main-medium`}>
         Восстановление пароля
       </h2>
       <EmailInput
@@ -52,10 +43,8 @@ const ForgotPassword = () => {
         name={"Email"}
         isIcon={false}
       />
-
       <Button
-        onClick={onResButton}
-        htmlType="button"
+        htmlType="submit"
         type="primary"
         size="medium"
         extraClass={`${style.forgot_button} mb-15`}
@@ -74,6 +63,7 @@ const ForgotPassword = () => {
           </Link>
         </p>
       </div>
+      </form>
     </section>
   );
 };
