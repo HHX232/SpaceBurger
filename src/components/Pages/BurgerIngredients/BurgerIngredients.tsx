@@ -233,7 +233,6 @@ const CardSets = ({ bunsRef, saucesRef, mainsRef, setCurrentTab }: ICardSetsProp
   const variants = {
     visible: (i: number) => ({
       opacity: 1,
-
       transition: {
         delay: i * 0.15,
       },

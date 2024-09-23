@@ -71,10 +71,10 @@ function AppHeader() {
             
   
             <NavItem
-              textType="text text_type_main-default text__disactive"
-              icon={<ListIcon type="secondary" />}
+              textType={location.pathname.includes("/feed") ? "text text_type_main-default text__active" : "text text_type_main-default text__disactive"}
+              icon={<ListIcon type={location.pathname.includes("/feed") ? "primary" : "secondary"} />}
               text="Лента заказов"
-              to="/"
+              to="/feed"
             />
           </ul>
           <div className={stylesHeader.header__logo}>

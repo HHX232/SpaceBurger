@@ -30,6 +30,7 @@ import {
 import { request } from "../../utils/responses";
 import { Action } from "redux";
 import { ThunkDispatch } from "redux-thunk";
+import FeedPage, { FeedItemList } from "../Pages/Feed/Feed";
 
 
 interface IIngredientDetails{
@@ -75,6 +76,7 @@ const  App = () => {
   useEffect(() => {
     (dispatch as ThunkDispatch<{}, {}, Action>)(takeIngredients());
   }, [dispatch]);
+
   useEffect(() => {
     const accessToken = getCookie("accessToken")?.replace("%20", " ");
   
@@ -171,7 +173,7 @@ const  App = () => {
         >
           <Route path="ingredients/:id" element={<IngredientPage />}></Route>
         </Route>
-
+          <Route path="/feed" element={<FeedPage />}/>
         <Route
           path="/login"
           element={
@@ -212,7 +214,8 @@ const  App = () => {
               <Profile />
             </ProtectedRouteElement>
           }
-        />
+        ></Route>
+
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
 

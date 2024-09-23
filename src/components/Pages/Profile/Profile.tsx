@@ -97,7 +97,7 @@ try{
                <Link className="text text_type_main-medium" to="profile">Профиль</Link>
             </li>
             <li className={`${style.profile_links_item} `}>
-               <Link className="text text_type_main-medium text_color_inactive" to="profile">История заказов</Link>
+               <Link className="text text_type_main-medium text_color_inactive" to="orders">История заказов</Link>
             </li>
             <li className={`${style.profile_links_item}`}>
                <Link onClick={e =>{
