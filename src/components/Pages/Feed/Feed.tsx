@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import Ingredient from '../../../utils/types';
 import { useEffect, useState } from 'react';
 import { motion } from "framer-motion";
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const WS_URL = 'wss://norma.nomoreparties.space/orders/all';
 const variants = {
@@ -17,18 +17,16 @@ const variants = {
    }),
    hidden: { opacity: 0 },
  };
-const formatOrderDate = (dateString: string): string => {
+export const formatOrderDate = (dateString: string): string => {
    const date = new Date(dateString);
    const now = new Date();
  
    const formatTime = (date: Date) => {
      return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
    };
- 
    if (now.toDateString() === date.toDateString()) {
      return `Сегодня, ${formatTime(date)}`;
    }
- 
    const yesterday = new Date(now);
    yesterday.setDate(now.getDate() - 1);
  
@@ -66,8 +64,9 @@ const getIngredientImage = (id: string) => {
 };
 
 const currentLocation = useLocation()
-
+// /feed/${feedNumber.slice(1)}
 return (
+   <Link to={`${currentLocation.pathname.includes("profile/orders") ?  `/profile/orders/${feedNumber.slice(1)}` :`/feed/${feedNumber.slice(1)}` }`} state={{ background: currentLocation }}>
    <div className={`${style.feed_order_box} p-6 `}>
        <div className={`${style.feed_order_subtitle_box} `}>
            <h4 className={`${style.feed_order_subtitle_number} text text_type_digits-default`}>{feedNumber}</h4>
@@ -116,15 +115,10 @@ return (
            </div>
        </div>
    </div>
+   </Link>
 );
 
 }
-
-
-
-
-
-
 
 
 interface Order {

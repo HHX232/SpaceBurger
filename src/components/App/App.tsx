@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { takeIngredients } from "../../services/actions/ingredient-action";
 import { closeIngredientDetails } from "../../services/actions/ingredient-details-open-action";
 import { closeOrderDetails } from "../../services/actions/order-details-action";
-import { Routes, Route, useSearchParams } from "react-router-dom";
+import { Routes, Route, useSearchParams, useLocation, useNavigate, useParams } from "react-router-dom";
 import Register from "../Pages/Register/Register";
 import Login from "../Pages/Login/Login";
 import ForgotPassword from "../Pages/Forgot-password/ForgotPassword";
@@ -31,6 +31,7 @@ import { request } from "../../utils/responses";
 import { Action } from "redux";
 import { ThunkDispatch } from "redux-thunk";
 import FeedPage, { FeedItemList } from "../Pages/Feed/Feed";
+import FeedModal from "../FeedModal/FeedModal";
 
 
 interface IIngredientDetails{
@@ -66,13 +67,15 @@ const  App = () => {
   const isOrdertitle = useSelector((store:IAppStore) => store.orderDetails.number);
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
-
+  const navigate = useNavigate()
   const modalIsOpen = searchParams.get("modalIsOpen");
 
   const closeIngredientDetailsFunction = () => {
     dispatch(closeIngredientDetails());
   };
-
+  const onFeedClose = () =>{
+    navigate(-1)
+  }
   useEffect(() => {
     (dispatch as ThunkDispatch<{}, {}, Action>)(takeIngredients());
   }, [dispatch]);
@@ -155,10 +158,33 @@ const  App = () => {
     dispatch(closeOrderDetails());
   };
 
+  const location = useLocation();
+  const background = location.state && location.state.background;
+
   return (
     <>
       <AppHeader />
-      <Routes>
+      {background && (
+        <Routes>
+         <Route
+           path='/feed/:number'
+           element={
+             <Modal  onClose={onFeedClose}>
+              <FeedModal/>
+             </Modal>
+           }
+         />
+         <Route path="/profile/orders/:number" element={
+          <ProtectedRouteElement>
+             <Modal  onClose={onFeedClose}>
+              <FeedModal/>
+             </Modal>
+             </ProtectedRouteElement>
+           }/>
+        </Routes>
+      )}
+
+      <Routes location={background || location}>
         {modalIsOpen !== "true" && (
           <Route path="/ingredients/:id" element={<IngredientPage />}></Route>
         )}
@@ -172,8 +198,13 @@ const  App = () => {
           }
         >
           <Route path="ingredients/:id" element={<IngredientPage />}></Route>
+         
         </Route>
+
+        <Route path='/feed/:number' element={<FeedModal />}/>
           <Route path="/feed" element={<FeedPage />}/>
+
+
         <Route
           path="/login"
           element={
@@ -207,14 +238,20 @@ const  App = () => {
           }
         />
 
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRouteElement>
-              <Profile />
-            </ProtectedRouteElement>
-          }
-        ></Route>
+<Route
+  path="/profile/*"
+  element={
+    <ProtectedRouteElement>
+      <Profile />
+    </ProtectedRouteElement>
+  }
+/>
+<Route path="/profile/orders/:number" element={
+           <ProtectedRouteElement>
+              <FeedModal/>
+              </ProtectedRouteElement>
+           }/>
+
 
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

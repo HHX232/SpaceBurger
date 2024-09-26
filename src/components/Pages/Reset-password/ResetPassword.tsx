@@ -2,7 +2,7 @@ import { useState } from "react";
 import style from './ResetPassword.module.css';
 import { PasswordInput, Input, Button } from '@ya.praktikum/react-developer-burger-ui-components';
 import { Link, useNavigate } from "react-router-dom";
-import { request } from "../../../utils/responses";
+
 import { getCookie, passwordResetThunk } from "../../../services/actions/register-action";
 
 const ResetPassword = () => {

@@ -15,6 +15,7 @@ ul, li, h1,h2,h3,h4 {
    background-color: #1C1C21;
    border-radius: 40px;
    display: flex;
+   width: auto;
    flex-direction: column;
    gap: 24px;
 }
@@ -60,8 +61,7 @@ ul, li, h1,h2,h3,h4 {
    display: flex;
    justify-content: center;
    position: relative;
-  
-   z-index: 0; /* Add this line */
+   z-index: 0; 
 }
 .feed_order_ingredients_item_border{
    position: absolute;
@@ -115,7 +115,7 @@ ul, li, h1,h2,h3,h4 {
 .feed_list{
    display: flex;
    flex-direction: column;
-   max-height: calc(100vh - 170px);
+   max-height: calc(100vh - 190px);
    overflow-y: auto;
    gap: 16px;
    padding-right: 18px;

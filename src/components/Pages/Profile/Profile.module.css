@@ -15,6 +15,7 @@ li::marker {
    display: flex;
    flex-direction: column;
    margin-right: 60px;
+   min-width: 300px;
 }
 .profile_links_item, .profile_links_text{
    max-width: 320px;
@@ -43,4 +44,12 @@ li::marker {
    display: flex;
    width: 100%;
    justify-content: space-evenly;
+}
+.orders_list{
+   display: flex;
+   flex-direction: column;
+   gap: 16px;
+   max-height: 77vh;
+padding-right: 18px;
+   overflow-y: scroll;
 }

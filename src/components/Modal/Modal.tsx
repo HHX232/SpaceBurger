@@ -49,7 +49,7 @@ const ModalOverlay: FC<ModalOverlayProps> = ({ childrenElem, title, onClose }) =
           </span>
         </div>
         <div className={style.modal_content}>
-          <div>{childrenElem}</div>
+          {childrenElem}
         </div>
       </div>
     </div>
