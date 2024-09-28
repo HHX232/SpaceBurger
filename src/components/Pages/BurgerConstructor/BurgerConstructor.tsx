@@ -22,6 +22,7 @@ import Ingredient from "../../../utils/types";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getCookie, refreshTokenExpiry, setCookie, updateToken } from "../../../services/actions/register-action";
 import { request } from "../../../utils/responses";
+import { useAppDispatch } from "../../../utils/hooks";
 
 export interface IIngredient{
   generatedId: string;
@@ -44,7 +45,7 @@ const generateUniqueId = (ingredients: IIngredient[]) => {
 };
 
 const BurgerItem:FC<IIngredient> = ({ generatedId="", text, price, image })=> {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const onRemove = (generatedId = "without gen-id") => {
     dispatch(removeIngredient(generatedId));
@@ -108,7 +109,7 @@ interface IBurgerConstructorState{
 }
 
 const BurgerConstructor = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate()
   const currentLocation = useLocation()
   const { ingredients, bun } = useSelector((state: IBurgerConstructorState) => state.constructorList);

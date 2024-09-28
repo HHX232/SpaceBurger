@@ -24,6 +24,7 @@ import Modal from "../../Modal/Modal";
 import { motion } from "framer-motion";
 import Ingredient from "../../../utils/types";
 import { IRootReducers } from "../../../services/reducers";
+import { useAppDispatch } from "../../../utils/hooks";
 
 interface TingredientBurger  {
   _id?: string | number;
@@ -64,7 +65,7 @@ const Card: FC<TingredientBurger> = ({
 }) => {
   const [count, setCount] = useState(0);
   const [inBasket, setInBasket] = useState(false);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { ingredients, bun } = useSelector(
     (state: TState) => state.constructorList
   );

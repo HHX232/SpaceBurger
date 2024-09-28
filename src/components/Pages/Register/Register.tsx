@@ -1,12 +1,13 @@
-import  { useState, useEffect, FormEventHandler, FormEvent } from "react";
+import  { useState, useEffect, FormEvent } from "react";
 import { PasswordInput, EmailInput, Input,  Button } from '@ya.praktikum/react-developer-burger-ui-components';
 import style from './Register.module.css';
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 import { registerUser, updateSuccessState } from '../../../services/actions/register-action';
 import { AnyAction, Dispatch as ReduxDispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import rootReducer from '../../../services/reducers/index'
+import { useAppDispatch } from "../../../utils/hooks";
 
 const Register = () => {
   const [userdata, setUserData] = useState({  email: "test-data@yandex.ru", password: "password", name: "Username"});
@@ -14,7 +15,7 @@ const Register = () => {
   const navigate = useNavigate();
   type RootState = ReturnType<typeof rootReducer>;
   type AppDispatch = ThunkDispatch<RootState, unknown, AnyAction>;
-  const dispatch: AppDispatch = useDispatch<AppDispatch>();
+  const dispatch: AppDispatch = useAppDispatch<AppDispatch>();
 
   interface IUserState {
     accessToken?: string | undefined;

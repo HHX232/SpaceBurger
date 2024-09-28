@@ -2,11 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import style from './FeedModal.module.css'
 import { CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components'
-import meat from '../../images/meat-01.png'
+
 import {request} from '../../utils/responses'
-import { useSelector } from 'react-redux';
-import { formatOrderDate } from '../Pages/Feed/Feed';
+
+
 import Ingredient from '../../utils/types';
+import countIDs from '../../utils/countIDs';
+import formatOrderDate from '../../utils/formatOrderDate';
+import { useAppSelector } from '../../utils/hooks';
 
 export const FeedListElement = ({image = "", text = "", numberProductCount, productPrice}:{image:string, text:string, numberProductCount:number|string, productPrice:string|number}) =>{
 
@@ -27,34 +30,23 @@ export const FeedListElement = ({image = "", text = "", numberProductCount, prod
 interface IOrderObject {
    createdAt: string;  // Дата создания заказа
    ingredients: string[];  // Массив идентификаторов ингредиентов
-   name: string;  // Название заказа
-   number: number;  // Номер заказа
-   owner: string;  // Идентификатор владельца
-   status: string;  // Статус заказа
-   updatedAt: string;  // Дата обновления заказа
-   __v: number;  // Версия документа (MongoDB)
-   _id: string;  // Идентификатор заказа
+   name?: string;  // Название заказа
+   number?: number;  // Номер заказа
+   owner?: string;  // Идентификатор владельца
+   status?: string;  // Статус заказа
+   updatedAt?: string;  // Дата обновления заказа
+   __v?: number;  // Версия документа (MongoDB)
+   _id?: string;  // Идентификатор заказа
  }
- interface IIngredientWithCount {
-   ingredient: Ingredient; 
-   count: number;
- }
- 
- function countIDs(arrayOfIDs: string[]): { idString: string; idCount: number }[] {
-  const idCounts: { [id: string]: number } = {};
-  arrayOfIDs.forEach((id) => {
-    if (idCounts[id]) {
-      idCounts[id]++;
-    } else {
-      idCounts[id] = 1;
-    }
-  });
+ interface IIngredient {
+  _id: string;
+  image: string;
+  name: string;
+  price: number;
 
-  return Object.keys(idCounts).map((id) => ({
-    idString: id,
-    idCount: idCounts[id],
-  }));
 }
+ 
+
   const FeedModal = ({ text = "done" }) => {
    const params = useParams();
    const [currentIngredient, setCurrentIngredient] = useState<{ idString: string; idCount: number }[]>([]);
@@ -63,10 +55,8 @@ interface IOrderObject {
  const location = useLocation()
  const background = location.state && location.state.background;
 
-   // @ts-ignore
-   const allIngredients = useSelector((state) => state.ingredients.globalIngredients);
+ const allIngredients = useAppSelector((state) => state.ingredients.globalIngredients) as IIngredient[];
 
- 
    useEffect(() => {
      if (numberFromParams) {
        request<{ orders: IOrderObject[], success: boolean }>(`orders/${numberFromParams}`, {
@@ -115,12 +105,12 @@ interface IOrderObject {
 
             {currentIngredient.map((item, index) => (
   <li key={index} className={`${style.feed_ingredients_list_item}`}>
-    <FeedListElement
-      image={`${allIngredients.find((ingredient:any) => ingredient._id === item.idString).image}`}
-      text={`${allIngredients.find((ingredient:any) => ingredient._id === item.idString).name}`}
-      numberProductCount={`${item.idCount}`}
-      productPrice={`${allIngredients.find((ingredient:any) => ingredient._id === item.idString).price}`}
-    />
+   <FeedListElement
+  image={allIngredients.find((ingredient) => ingredient._id === item.idString)?.image ?? ''}
+  text={allIngredients.find((ingredient) => ingredient._id === item.idString)?.name ?? ''}
+  numberProductCount={`${item.idCount}`}
+  productPrice={allIngredients.find((ingredient) => ingredient._id === item.idString)?.price ?? 0}
+/>
   </li>
 ))} 
             </ul>
@@ -130,7 +120,7 @@ interface IOrderObject {
                <p className={`${style.feed_price_box_number} text text_type_digits-default`}>
   {currentIngredient.reduce((acc, item) => {
     const ingredient = allIngredients.find((ing:any) => ing._id === item.idString);
-    return acc + item.idCount * ingredient.price;
+    return acc + item.idCount * (ingredient?.price || 0);
   }, 0)}
 </p>
                   <CurrencyIcon type="primary" />

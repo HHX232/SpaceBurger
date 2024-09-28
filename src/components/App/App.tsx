@@ -6,7 +6,7 @@ import style from "./App.module.css";
 import OrderDetails from "../OrderDetails/OrderDetails";
 import IngredientDetails from "../IngredientDetails/IngredientDetails";
 import Modal from "../Modal/Modal";
-import { useDispatch, useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 import { takeIngredients } from "../../services/actions/ingredient-action";
 import { closeIngredientDetails } from "../../services/actions/ingredient-details-open-action";
 import { closeOrderDetails } from "../../services/actions/order-details-action";
@@ -32,6 +32,7 @@ import { Action } from "redux";
 import { ThunkDispatch } from "redux-thunk";
 import FeedPage, { FeedItemList } from "../Pages/Feed/Feed";
 import FeedModal from "../FeedModal/FeedModal";
+import { useAppDispatch } from "../../utils/hooks";
 
 
 interface IIngredientDetails{
@@ -60,12 +61,12 @@ interface IAppStore {
   }
 }
 const  App = () => {
-  //данные через redux
+ 
   const isAuthSuccess = useSelector((store:IAppStore) => store.register.success);
   const { ingredientObject } = useSelector((store:IAppStore) => store.ingredientDetails);
   const isOpenOrderDetails = useSelector((store:IAppStore) => store.orderDetails.isOpen);
   const isOrdertitle = useSelector((store:IAppStore) => store.orderDetails.number);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate()
   const modalIsOpen = searchParams.get("modalIsOpen");

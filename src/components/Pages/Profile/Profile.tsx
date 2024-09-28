@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import style from './Profile.module.css';
-import { Link, Routes, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Input, EmailInput, PasswordInput, Button } from '@ya.praktikum/react-developer-burger-ui-components';
-import { getCookie, checkAndUpdateAccessToken, logout, updateToken } from "../../../services/actions/register-action";
+import { getCookie, checkAndUpdateAccessToken, logout } from "../../../services/actions/register-action";
 import { request } from "../../../utils/responses";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { FeedItemList } from "../Feed/Feed";
+import { wsConnect, wsDisconnect } from "../../../services/actions/socketActions";
+import { AppDispatch, RootState } from "../../..";
+import { useAppDispatch } from "../../../utils/hooks";
 
 interface Order {
    ingredients: string[];
@@ -77,17 +80,17 @@ const ProfileInputs: React.FC<ProfileInputsProps> = ({ profileUserData, onChange
    );
 };
 
-// Profile Component
 const Profile = () => {
    const [profileUserData, setUserData] = useState({ name: "", email: "", password: "Are you want create new password?" });
    const [startInputsValue, setStartInputsValue] = useState({ name: "", email: "", password: "Are you want create new password?" });
    const [boolUserAccess, setBoolUserAccess] = useState(false);
    const [boolNewData, setBoolNewData] = useState(false);
-   const [orders, setOrders] = useState<Order[]>([])
+    const ordersFromRedux = useSelector((state: RootState) => state.socket.orders);
    const accessTokenFromCookie = getCookie('accessToken');
    const accessToken = accessTokenFromCookie ? accessTokenFromCookie.replace('Bearer%20', '') : "";
    const location = useLocation()
-   const allIngredients = useSelector((state:any) => state.ingredients.globalIngredients);
+   const dispatch: AppDispatch = useAppDispatch()
+
    const getUserInfoFromApi = async () => {
       if (!boolUserAccess) {
          try {
@@ -117,73 +120,16 @@ const Profile = () => {
       setStartInputsValue({ ...profileUserData });
    }, []);
 
-      useEffect( () =>{    
-      const wsAccessTokenWithBear = getCookie('accessToken');
-      const wsAccessToken = wsAccessTokenWithBear ? wsAccessTokenWithBear.replace('Bearer%20', '') : "";
-         const ws = new WebSocket(`wss://norma.nomoreparties.space/orders?token=${wsAccessToken}`)
-         if(!ws){console.error("WS not defined")}
-         ws.onopen = () => {
-            console.log("WS OPEN")
-         }
-         ws.onmessage = (event) =>{
-          const newData = JSON.parse(event.data)
-          setOrders(newData.orders)
-         }
-         ws.onclose = () => {
-            console.log("WS CLOSE")
-         }
-         ws.onerror = (error) => {
-            console.error("WS error", error)
-         }
-         return () => {
-            ws.close()
-          }
-      }, [])
+       useEffect(() => {
+    if (accessToken) {
+      dispatch(wsConnect(`wss://norma.nomoreparties.space/orders?token=${accessToken}`)); 
+    }
 
-      // useEffect(() => {
-      //    const connectWebSocket = async () => {
-      //      // Вызов асинхронной функции обновления токена
-      //      await updateToken();
-       
-      //      // Получение токена после обновления
-      //      const wsAccessTokenWithBear = getCookie('accessToken');
-      //      const wsAccessToken = wsAccessTokenWithBear ? wsAccessTokenWithBear.replace('Bearer%20', '') : "";
-       
-      //      // Создание соединения WebSocket
-      //      const ws = new WebSocket(`wss://norma.nomoreparties.space/orders?token=${wsAccessToken}`);
-       
-      //      if (!ws) {
-      //        console.error("WS not defined");
-      //        return;
-      //      }
-       
-      //      ws.onopen = () => {
-      //        console.log("WS OPEN");
-      //      };
-       
-      //      ws.onmessage = (event) => {
-      //        const newData = JSON.parse(event.data);
-      //        console.log(newData);
-      //      };
-       
-      //      ws.onclose = () => {
-      //        console.log("WS CLOSE");
-      //      };
-       
-      //      ws.onerror = (error) => {
-      //        console.error("WS error", error);
-      //      };
-       
-      //      // Очистка соединения при размонтировании компонента
-      //      return () => {
-      //        ws.close();
-      //      };
-      //    };
-       
-      //    // Вызов асинхронной функции
-      //    connectWebSocket();
-      //  }, []);
-       
+    return () => {
+      dispatch(wsDisconnect()); 
+    };
+  }, [dispatch, accessToken]);
+
    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       setUserData({ ...profileUserData, [e.target.name]: e.target.value });
       setBoolNewData(true);
@@ -247,7 +193,7 @@ const Profile = () => {
                
         {location.pathname.includes("profile/orders") ? 
         <ul className={`${style.orders_list}`}>
-        {orders.map((item,index)=>{
+        {ordersFromRedux.map((item:any,index:any)=>{
          return <li key={index}> <FeedItemList feedDate={item.createdAt} feedNumber={`#${item.number.toString()}`} feedSubTitle={item.status} feedTitle={(item.name) as any} feedIngredients={item.ingredients}/></li>
         })}
         </ul> : <ProfileInputs
