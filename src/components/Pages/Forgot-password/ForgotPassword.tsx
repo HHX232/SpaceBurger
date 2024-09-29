@@ -8,11 +8,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { request } from "../../../utils/responses";
 import { forgotPasswordThunk, markForgotPasswordVisited } from "../../../services/actions/register-action";
 import { useDispatch } from "react-redux";
+import { useAppDispatch } from "../../../utils/hooks";
 
 const ForgotPassword = () => {
   const [mailForgot, setMailForgot] = useState("yourmail@gmail.com");
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const onChange = (e: Event) => {
     const target = e.target as HTMLInputElement;
     setMailForgot(target.value);

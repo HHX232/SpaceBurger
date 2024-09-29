@@ -5,6 +5,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loginUserThunk, newLoginData } from "../../../services/actions/register-action";
 import { request } from "../../../utils/responses";
+import { useAppDispatch } from "../../../utils/hooks";
 
 interface IDataUser{
     success:boolean;
@@ -19,7 +20,7 @@ const Login = () => {
     const [loginUservalue, setLoginUserValue] = useState({ email: '', password: '' });
     const navigate = useNavigate();
     const location = useLocation();
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setLoginUserValue({ ...loginUservalue, [e.target.name]: e.target.value });

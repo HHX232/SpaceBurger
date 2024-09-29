@@ -28,7 +28,7 @@ export const markForgotPasswordVisited = () => ({
   type: FORGOT_PASSWORD_VISITED,
 });
 
-const refreshTokenExpiry = 30 * 24 * 60 * 60 * 1000;
+export const refreshTokenExpiry = 30 * 24 * 60 * 60 * 1000;
 export const updateSuccessState = (success: boolean) => ({
   type: UPDATE_SUCCESS_STATE,
   success,
@@ -209,7 +209,6 @@ export const registerUser: (registerMail: string, registerPassword: string, regi
 
 export const updateToken = async () => {
   const refreshToken = getCookie("refreshToken");
-  console.log("refreshToken ", refreshToken)
   if (!refreshToken) {
     console.error("Не пройдена регистрация")
     return;
@@ -221,24 +220,23 @@ export const updateToken = async () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token: refreshToken }),
     });
-   
+
     if (response.success) {
       const {
         accessToken: newAccessTokenValue,
         refreshToken: newRefreshToken,
       } = response;
-      console.log("response ", response)
       const token = newAccessTokenValue ? newAccessTokenValue.split(" ")[1] : "";
-    console.log( token)
       setCookie("accessToken", token, {
         expires: new Date(Date.now() + 20 * 60 * 1000),
       }); 
       //Не знаю почему, но если добавить проверку на существование refreshToken, оно перестает задаваться, хотя раньше вроде и работало. Почему яндекс каждый раз возвращает новый вообще?
-      //@ts-ignore
+      // @ts-ignore
    setCookie("refreshToken", newRefreshToken, {
         expires: new Date(Date.now() + refreshTokenExpiry),
       }
     );
+    console.log("Новый рефреш токен в register-action ", newRefreshToken, " а вот старый", refreshToken)
       
       return { type: 'UPDATE_TOKEN_SUCCESS' };
     } else {

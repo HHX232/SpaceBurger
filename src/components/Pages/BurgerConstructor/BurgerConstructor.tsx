@@ -20,8 +20,9 @@ import { useDrop } from "react-dnd";
 import { v4 as uuidv4 } from "uuid";
 import Ingredient from "../../../utils/types";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getCookie } from "../../../services/actions/register-action";
+import { getCookie, refreshTokenExpiry, setCookie, updateToken } from "../../../services/actions/register-action";
 import { request } from "../../../utils/responses";
+import { useAppDispatch } from "../../../utils/hooks";
 
 export interface IIngredient{
   generatedId: string;
@@ -44,7 +45,7 @@ const generateUniqueId = (ingredients: IIngredient[]) => {
 };
 
 const BurgerItem:FC<IIngredient> = ({ generatedId="", text, price, image })=> {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const onRemove = (generatedId = "without gen-id") => {
     dispatch(removeIngredient(generatedId));
@@ -108,7 +109,7 @@ interface IBurgerConstructorState{
 }
 
 const BurgerConstructor = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate()
   const currentLocation = useLocation()
   const { ingredients, bun } = useSelector((state: IBurgerConstructorState) => state.constructorList);
@@ -128,17 +129,29 @@ const BurgerConstructor = () => {
 
   const handleOrder = async () => {
     try{
-
      const refreshCookie = getCookie('refreshToken')
       const data:{success: boolean, accessToken: string, refreshToken:string} = await request("auth/token", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: refreshCookie }),
       })
+
+      if(data.success){
+        setCookie("accessToken", data.accessToken, {
+          expires: new Date(Date.now() + 20 * 60 * 1000),
+        }); 
+        setCookie("refreshToken", data.refreshToken, {
+          expires: new Date(Date.now() + refreshTokenExpiry),
+        }
+      );
+      }
+
       if(!data.success){
+
         throw new Error("Ошибка ответа от сервера")
       }
     }catch(err){
+
       navigate("/login", { state: { from: { pathname: currentLocation } } });
       return
     }
@@ -190,9 +203,6 @@ const BurgerConstructor = () => {
           <p className={`${style.total__number} text text_type_digits-medium`}>
             {totalPrice}
           </p>
-            {
-              //Был удален classname, поскольку вызывало непонятную ошибку
-            }
 
           <CurrencyIcon type="primary" />
         </div>

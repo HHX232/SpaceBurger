@@ -10,6 +10,8 @@ import rootReducer from "./services/reducers";
 import { DndProvider } from "react-dnd"
 import { HTML5Backend } from "react-dnd-html5-backend"
 import { BrowserRouter as Router } from 'react-router-dom';
+import { WS_URL } from "./components/Pages/Feed/Feed";
+import { socketMiddleware } from "./services/middleware/socketMiddleware";
 
 
 // Создание composeEnhancers для поддержки Redux DevTools
@@ -21,9 +23,12 @@ const composeEnhancers =
 // Создание store с использованием composeEnhancers и middleware
 const store = createStore(
   rootReducer,
-  composeEnhancers(applyMiddleware(thunk))
+  composeEnhancers(applyMiddleware(thunk, socketMiddleware()))
 );
- 
+
+export type RootState = ReturnType<typeof store.getState>
+export type AppDispatch = typeof store.dispatch
+
 const root = ReactDOM.createRoot(document.getElementById("root") ?? document.body);
 
 root.render(

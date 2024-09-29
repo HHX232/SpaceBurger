@@ -57,7 +57,7 @@ function AppHeader() {
 
   return (
     <header>
-    <nav className={`${stylesHeader.header} `}>
+    <nav className={`${stylesHeader.header} pt-3 pb-3`}>
       <div className={stylesHeader.header__container}>
         <div className={stylesHeader.header__inner}>
           <ul className={stylesHeader.nav__list}>
