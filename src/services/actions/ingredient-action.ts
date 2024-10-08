@@ -1,13 +1,12 @@
 // src/actions/ingredients-action.ts
 
 import { Dispatch } from 'redux';
-import { request } from '../../utils/responses'; // Adjust the import path as needed
+import { request } from '../../utils/responses'; 
 import Ingredient from '../../utils/types';
 export const TAKE_INGREDIENTS_PROGRESS = 'TAKE_INGREDIENTS_PROGRESS' as const;
 export const TAKE_INGREDIENTS_SUCCESS = 'TAKE_INGREDIENTS_SUCCESS' as const;
 export const TAKE_INGREDIENTS_ERROR = 'TAKE_INGREDIENTS_ERROR' as const;
 
-// Define action types
 interface TakeIngredientsProgressAction {
   type: typeof TAKE_INGREDIENTS_PROGRESS;
 }
@@ -21,10 +20,7 @@ interface TakeIngredientsErrorAction {
   type: typeof TAKE_INGREDIENTS_ERROR;
 }
 
-type TakeIngredientsActions =
-  | TakeIngredientsProgressAction
-  | TakeIngredientsSuccessAction
-  | TakeIngredientsErrorAction;
+type TakeIngredientsActions = | TakeIngredientsProgressAction | TakeIngredientsSuccessAction | TakeIngredientsErrorAction;
 
 // Thunk action creator
 export function takeIngredients() {
@@ -33,6 +29,7 @@ export function takeIngredients() {
 
     request<{ data: Ingredient[] }>('ingredients', {})
       .then((response) => {
+        console.log("response from async ingedient-action", response)
         dispatch({ type: TAKE_INGREDIENTS_SUCCESS, ingredients: response.data });
       })
       .catch((err: Error) => {

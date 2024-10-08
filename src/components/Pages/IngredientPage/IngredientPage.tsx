@@ -42,7 +42,7 @@ const IngredientPage = () => {
  
 
   return (
-    <div className={`${style.container_ingedient}`} style={{ marginTop: isModalClosed ? "120px" : "initial" }}>
+    <div data-testid="ingedient-modal-testid2" className={`${style.container_ingedient}`} style={{ marginTop: isModalClosed ? "120px" : "initial" }}>
       <h2 className={`${style.ingredient_title} text text_type_main-large`}>
         {"Детали ингредиента"}
       </h2>
@@ -51,8 +51,11 @@ const IngredientPage = () => {
         src={ingredient.image_large}
         alt=""
       />
-      <p className={`${style.ingredient_subtitle} text text_type_main-medium`}>
-        {ingredient.name}
+      <p data-testid="name-of-ingerdient-modal" className={`${style.ingredient_subtitle} text text_type_main-medium`}>
+        {/* 
+        !!!!!!!!!!!!!
+        */}
+        {ingredient.name} 
       </p>
       <ul className={`${style.pfc_list} mb-5`}>
         <li

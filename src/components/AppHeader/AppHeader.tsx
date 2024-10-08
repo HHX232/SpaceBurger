@@ -39,7 +39,7 @@ const ProfileButton = () => {
   const textType = location.pathname.includes("/profile")? "text text_type_main-default text__active" : "text text_type_main-default text__disactive";
 
   return (
-    <Link
+    <Link data-testid="profile-tesid"
       className={`${style.profile__box}`}
       to="/profile"
       onDoubleClick={handleDoubleClick}
@@ -77,8 +77,8 @@ function AppHeader() {
               to="/feed"
             />
           </ul>
-          <div className={stylesHeader.header__logo}>
-            <Link to="/">
+          <div  className={stylesHeader.header__logo}>
+            <Link data-testid="logo-link-testid" to="/">
             <Logo /></Link>
           </div>
           

@@ -1,13 +1,11 @@
 import { Dispatch } from 'redux';
 import {request} from '../../utils/responses'
-import Ingredient from '../../utils/types';
-import { IIngredient } from '../../components/Pages/BurgerConstructor/BurgerConstructor';
 import { getCookie } from './register-action';
-export const ORDER_DETAILS_OPEN = "ORDER_DETAILS_OPEN" as const;
-export const ORDER_DETAILS_CLOSE = "ORDER_DETAILS_CLOSE" as const;
-export const ORDER_REQUEST = "ORDER_REQUEST" as const;
-export const ORDER_SUCCESS = "ORDER_SUCCESS" as const;
-export const ORDER_FAILURE = "ORDER_FAILURE" as const;
+export const ORDER_DETAILS_OPEN:"ORDER_DETAILS_OPEN" = "ORDER_DETAILS_OPEN" as const;
+export const ORDER_DETAILS_CLOSE:"ORDER_DETAILS_CLOSE" = "ORDER_DETAILS_CLOSE" as const;
+export const ORDER_REQUEST:"ORDER_REQUEST" = "ORDER_REQUEST" as const;
+export const ORDER_SUCCESS:"ORDER_SUCCESS" = "ORDER_SUCCESS" as const;
+export const ORDER_FAILURE:"ORDER_FAILURE" = "ORDER_FAILURE" as const;
 
 export const openOrderDetails = (number: string) => ({ 
   type: ORDER_DETAILS_OPEN,
@@ -32,7 +30,7 @@ export const orderFailure = (error:Error) => ({
   type: ORDER_FAILURE,
   error,
 });
-interface OrderResponse {
+interface OrderResponse { 
   order: {
     number: string;
   };

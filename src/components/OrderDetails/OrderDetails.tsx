@@ -8,7 +8,7 @@ function OrderDetails({ title = "00000"}) {
   return (
     <>
       <div className={`${style.order_content} mt-9`}>
-        <h3 className={`${style.title_big} text text_type_digits-large mb-8`}>{title}</h3>
+        <h3 data-testid="order-test-title" className={`${style.title_big} text text_type_digits-large mb-8`}>{title}</h3>
         <p className={`${style.order_subtitle} text text_type_main-medium mb-15`}>идентификатор заказа</p>
         <img className={`${style.done_img} mb-15`} src={doneImg} alt="check mark" />
         <p className={`${style.cooking_text} text text_type_main-default mb-2`}>

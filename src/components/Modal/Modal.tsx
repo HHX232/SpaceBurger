@@ -38,14 +38,14 @@ const ModalOverlay: FC<ModalOverlayProps> = ({ childrenElem, title, onClose }) =
   };
 
   return (
-    <div onClick={onClickOverlay} className={style.modalOverlay}>
+    <div data-testid="modal-overlay-testid" onClick={onClickOverlay} className={style.modalOverlay}>
       <div className={`${style.modal_inner} pl-10 pr-10 pt-10 pb-15`}>
         <div className={style.modal_title_box}>
           <h3 className={`${style.modal_title} text text_type_main-large`}>
             {title}
           </h3>
-          <span className={style.close_icon} onClick={handleCloseIconClick}>
-            <CloseIcon type="primary" />
+          <span data-testid="testid-close-modal" className={style.close_icon} onClick={handleCloseIconClick}>
+            <CloseIcon  type="primary" />
           </span>
         </div>
         <div className={style.modal_content}>
@@ -100,7 +100,7 @@ const Modal: FC<IModal> = ({ title = "", children, onClose }) =>{
     return null; // Don't render anything if modalRoot is null
   }
   return ReactDOM.createPortal(
-    <div className={style.modal}>
+    <div data-testid="modal-main-testid" className={style.modal}>
       {modalRoot && modalRoot.childNodes.length <= 1 && (
         <ModalOverlay
           title={title}

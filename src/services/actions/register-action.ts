@@ -58,13 +58,11 @@ export const registerFailed = (error:Error | string) => ({
   error,
 });
 
-//функция для сохранения access токена
 export const newAccessToken = (accessToken:string) => ({
   type: CREATE_NEW_ACCESS_TOKEN,
   accessToken,
 });
 
-//функция для поднятия данных из куки
 export function getCookie(name:string) {
   const cookies = document.cookie.split(";");
   for (let i = 0; i < cookies.length; i++) {
@@ -81,8 +79,10 @@ interface CookieOptions {
   secure?: boolean;
   samesite?: "lax" | "strict" | "none";
 }
-//функция для сохранения куки
-export const setCookie = (name:string, value:string, options:CookieOptions = {}) => {
+export const checkAndUpdateAccessToken = async () => {
+  
+};
+export const setCookie = (name:string, value:string, options: CookieOptions = {}) => {
   options = {
     path: "/",
     secure: true,
@@ -113,7 +113,7 @@ export const clearTokens = () => {
   setCookie("accessToken", "", { expires: new Date(0) });
 };
 
-//выходим из системы
+
 export const logout = () => {
   const refreshToken = getCookie("refreshToken");
   if (!refreshToken) {
@@ -153,7 +153,6 @@ export const logout = () => {
     });
 };
 
-//при входе в существующий акк
 export const newLoginData = (email:string, name:string, accessToken:string, refreshToken:string) => {
   setCookie("refreshToken", refreshToken, {
     expires: new Date(Date.now() + refreshTokenExpiry),
@@ -206,7 +205,7 @@ export const registerUser: (registerMail: string, registerPassword: string, regi
   };
 };
 
-
+//!не писал тест
 export const updateToken = async () => {
   const refreshToken = getCookie("refreshToken");
   if (!refreshToken) {
@@ -230,14 +229,12 @@ export const updateToken = async () => {
       setCookie("accessToken", token, {
         expires: new Date(Date.now() + 20 * 60 * 1000),
       }); 
-      //Не знаю почему, но если добавить проверку на существование refreshToken, оно перестает задаваться, хотя раньше вроде и работало. Почему яндекс каждый раз возвращает новый вообще?
+      //Не знаю почему, но если добавить проверку на существование refreshToken, оно перестает задаваться, хотя раньше вроде и работало.
       // @ts-ignore
    setCookie("refreshToken", newRefreshToken, {
         expires: new Date(Date.now() + refreshTokenExpiry),
       }
     );
-    console.log("Новый рефреш токен в register-action ", newRefreshToken, " а вот старый", refreshToken)
-      
       return { type: 'UPDATE_TOKEN_SUCCESS' };
     } else {
       console.error("Не удалось обновить AccessToken");
@@ -290,9 +287,6 @@ export const setCheckUserAuth = (isSuccess:boolean) => ({
   isSuccess,
 });
 
-export const checkAndUpdateAccessToken = async () => {
-  
-};
 
 export const passwordResetThunk = (password: string, token: string, navigate: (path: string) => void) => {
   return async (): Promise<void> => {
@@ -306,20 +300,14 @@ export const passwordResetThunk = (password: string, token: string, navigate: (p
       });
 
       const typedResponse = await response.json();
-console.log(typedResponse)
-try{
+
       if (typedResponse.success) {
         navigate("/profile");
       } else {
-        throw new Error(typedResponse.message);
+        return Promise.reject(typedResponse.message);
       }
-    }catch(err){console.log(err)}
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(error.message);
-      } else {
-        console.log("Unknown error occurred")
-      }
+    } catch (error:any) {
+      return Promise.reject(error.message);
     }
   };
 };
@@ -341,9 +329,9 @@ export const forgotPasswordThunk = (email: string, navigate: (path: string) => v
       });
 
       if (response.success) {
-        navigate("/reset-password"); // Navigate to the reset password page
+        navigate("/reset-password");
       } else {
-        alert(response.message); // Handle error by showing alert
+        alert(response.message); 
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";

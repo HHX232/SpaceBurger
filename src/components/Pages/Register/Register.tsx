@@ -75,6 +75,7 @@ const Register = () => {
          <h2 className={`${style.register_title} text text_type_main-medium`}>Регистрация</h2>
          <div className={`${style.inputs_box}`}>
             <Input
+              data-testid="input-name-testid"
                onChange={onChange}
                value={userdata.name}
                name={'name'}
@@ -82,17 +83,20 @@ const Register = () => {
                type={"text"}
             />
             <EmailInput
+             data-testid="input-email-testid"
                onChange={onChange}
                value={userdata.email}
                name={'email'}
                isIcon={false}
             />
             <PasswordInput
+             data-testid="input-password-testid"
                onChange={onChange}
                value={userdata.password}
                name={'password'}
             />
             <Button
+             data-testid="button-submit-register-testid"
                htmlType="submit"
                type="primary"
                size="medium"

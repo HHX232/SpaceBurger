@@ -74,19 +74,19 @@ const BurgerList : FC<IMassIngredients> =({ ingredients }) => {
 
   return (
     <Reorder.Group<IIngredient>
-      className={`${style.constructor__list} ${style.custom__scrollbar}`}
+      className={`${style.constructor__list} ${style.custom__scrollbar} ${style.dropClass}`}
       axis="y"
       values={ingredients}
       onReorder={(newOrder: IIngredient[]) => setIngredients(newOrder as Ingredient[])}
     >
       {ingredients.map((item) => (
         <Reorder.Item
-          key={item.generatedId}
+          key={item.generatedId ?? Math.random()}
           value={item}
           className={`${style.constructor__list_el}`}
         >
           <BurgerItem
-            generatedId={item.generatedId ?? ""}
+            generatedId={item.generatedId ?? Math.random()}
             text={item.text}
             price={item.price}
             image={item.image}
@@ -174,7 +174,7 @@ const BurgerConstructor = () => {
   }, [ingredients, bun]);
 
   return (
-    <div ref={dropRef} className={`${style.constructor} ml-4 mt-25`}>
+    <div   data-testid="drop-testid" ref={dropRef} className={`${style.constructor} ml-4 mt-25`}>
       {bun && (
         <div className={`${style.constructor__el} ml-8`}>
           <ConstructorElement
@@ -186,7 +186,7 @@ const BurgerConstructor = () => {
           />
         </div>
       )}
-      <BurgerList ingredients={ingredients} />
+      <BurgerList  ingredients={ingredients} />
       {bun && (
         <div className={`${style.constructor__el} ml-8 mb-6`}>
           <ConstructorElement
@@ -212,6 +212,7 @@ const BurgerConstructor = () => {
           type="primary"
           size="large"
           disabled={loading}
+          data-testid="submit-order-test"
         >
           {loading ? "Отправка..." : "Оформить заказ"}
         </Button>

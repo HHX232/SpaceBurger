@@ -19,9 +19,10 @@ const initialState = {
   loading: false,
   error: null,
 };
- 
+  
 const orderDetailsReducer = (state = initialState, action:{type: string; number:  string; orderNumber: string, error: object}) => {
   switch (action.type) {
+    
     case ORDER_DETAILS_OPEN:
       return { ...state, isOpen: true, number: action.number };
     case ORDER_DETAILS_CLOSE:
