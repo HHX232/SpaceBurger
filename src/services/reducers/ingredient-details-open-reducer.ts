@@ -33,6 +33,7 @@ const ingredientDetailsReducer = (
   state = initialState,
   action: { type: string; payload: object }
 ) => {
+  
   switch (action.type) {
     case INGREDIENT_DETAILS_IS_OPEN:
       return { ...state, ingredientObject: action.payload };

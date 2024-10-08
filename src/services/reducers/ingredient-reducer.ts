@@ -17,8 +17,10 @@ import {
    ingredientsFaild: false
  };
  
+
  const ingredientReducer = (state = initialState, action:{type:string; ingredients: object[]}) => {
    switch (action.type) {
+    
      case TAKE_INGREDIENTS_PROGRESS:
        console.log("ingredients in progress");
        return { ...state, ingredientsProgress: true, ingredientsFaild: false };

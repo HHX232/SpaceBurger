@@ -1,4 +1,4 @@
-// src/reducers/constructorReducer.ts
+
 import {
    ADD_INGREDIENT,
    REMOVE_INGREDIENT,
@@ -64,7 +64,6 @@ import {
    },
  };
  
- // Constructor reducer function
  const constructorReducer = (state = initialState, action: ConstructorActions): ConstructorState => {
    switch (action.type) {
      case ADD_INGREDIENT:
@@ -94,6 +93,7 @@ import {
          const currentIndex = currentIngredients.findIndex(
            (item) => item.generatedId === newItem.generatedId
          );
+         
          if (currentIndex !== -1 && currentIndex !== newIndex) {
            const [movedItem] = currentIngredients.splice(currentIndex, 1);
            currentIngredients.splice(newIndex, 0, movedItem);

@@ -56,7 +56,7 @@ const initialState: RegisterState = {
   forgotPasswordVisited: false,
 };
 
-// Register reducer function
+
 const registerReducer = (state = initialState, action: RegisterAction): RegisterState => {
   switch (action.type) {
     case REGISTER_IN_PROGRESS:
@@ -79,6 +79,7 @@ const registerReducer = (state = initialState, action: RegisterAction): Register
       };
     case REGISTER_FAILED:
       return { ...state, loading: false, success: false, errorRegister: true };
+
     case CREATE_NEW_ACCESS_TOKEN:
       if (!action.accessToken) {
         console.error("Invalid action payload");
@@ -86,6 +87,9 @@ const registerReducer = (state = initialState, action: RegisterAction): Register
       }
       return { ...state, accessToken: action.accessToken };
     case LOGIN_VALUE_DATA:
+      if(!action.accessToken || !action.refreshToken || !action.name || !action.email){
+        console.error("Error in LOGIN_VALUE_DATA")
+      }
       return {
         ...state,
         accessToken: action.accessToken || "",

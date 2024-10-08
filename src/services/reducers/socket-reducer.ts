@@ -28,7 +28,8 @@ interface SocketState {
          total: action.payload.total,
          totalToday: action.payload.totalToday,
        };
- 
+  
+       
      case 'WS_ERROR':
        return { ...state, error: action.payload };
  

@@ -23,6 +23,7 @@ export interface IRootReducers {
 }
 
 const rootReducer = combineReducers({
+  
    //ingredients берется с сервера и прекрасно работает вообще
     ingredients: ingredientReducer,
     //constructor это состояния burgerConstructor
