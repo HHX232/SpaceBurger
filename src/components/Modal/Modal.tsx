@@ -17,13 +17,10 @@ const ModalOverlay: FC<ModalOverlayProps> = ({ childrenElem, title, onClose }) =
 
   const onClickOverlay = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (e.target === e.currentTarget) {
-      const newSearchParams = new URLSearchParams();
-      newSearchParams.set('modalIsOpen', 'false');
-      onClose();
-      navigate({
-        pathname: '/',
-        search: `?${newSearchParams.toString()}`,
-      });
+      const newSearchParams = new URLSearchParams(window.location.search);
+      newSearchParams.set('modalIsOpen', 'false'); 
+      onClose(); 
+      navigate(-1);
     }
   };
 
