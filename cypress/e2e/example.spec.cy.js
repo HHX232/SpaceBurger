@@ -27,7 +27,6 @@ describe('service is available', function() {
     cy.get(profileTestId).click();
   
     cy.url().should('include', '/login');
-  
     cy.get(loginEmailTestId).type(email);
     cy.get(loginPasswordTestId).type(password);
     cy.get(loginSubmitTestId).click();
